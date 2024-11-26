@@ -6,7 +6,7 @@ bp = Blueprint('templates', __name__)
 
 @bp.route('/templates')
 def list_templates():
-    templates = Template.query.filter_by(is_active=True).all()
+    templates = Template.query.all()
     return render_template('templates/list.html', templates=templates)
 
 @bp.route('/templates/create', methods=['GET', 'POST'])
@@ -74,12 +74,49 @@ def create_template():
             
     return render_template('templates/create.html')
 
-@bp.route('/templates/<template_id>')
+@bp.route('/templates/<string:template_id>')
 def view_template(template_id):
     template = Template.query.get_or_404(template_id)
     return render_template('templates/view.html', template=template)
 
-@bp.route('/templates/<template_id>/delete', methods=['POST'])
+@bp.route('/templates/<string:template_id>/edit', methods=['GET', 'POST'])
+def edit_template(template_id):
+    template = Template.query.get_or_404(template_id)
+    
+    if request.method == 'POST':
+        if not request.is_json:
+            return jsonify({
+                'success': False,
+                'message': 'Invalid request format. Expected JSON.'
+            }), 400
+
+        try:
+            data = request.get_json()
+            
+            # Update the template
+            template.title = data['title']
+            template.description = data['description']
+            template.sections = data['sections']
+            template.is_active = data.get('is_active', True)
+            
+            db.session.commit()
+            
+            return jsonify({
+                'success': True,
+                'message': 'Template updated successfully!',
+                'redirect_url': url_for('templates.view_template', template_id=template.id)
+            })
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error updating template: {str(e)}")
+            return jsonify({
+                'success': False,
+                'message': 'Failed to update template. Please try again.'
+            }), 500
+            
+    return render_template('templates/edit.html', template=template)
+
+@bp.route('/templates/<string:template_id>/delete', methods=['POST'])
 def delete_template(template_id):
     try:
         # Validate CSRF token

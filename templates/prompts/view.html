@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}{{ prompt.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>{{ prompt.name }}</h1>
+            <p class="text-muted">Version {{ prompt.version }}</p>
+        </div>
+        <div>
+            <a href="{{ url_for('prompts.edit_prompt', prompt_id=prompt.id) }}" class="btn btn-primary">
+                Edit Prompt
+            </a>
+            <a href="{{ url_for('prompts.list_prompts') }}" class="btn btn-outline-secondary">
+                Back to List
+            </a>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Description</h5>
+            <p class="card-text">{{ prompt.description }}</p>
+            <div class="mb-3">
+                <span class="badge bg-info">{{ prompt.type|title }}</span>
+                <span class="badge {% if prompt.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                    {{ 'Active' if prompt.is_active else 'Inactive' }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Template Content</h5>
+            <pre class="bg-light p-3 rounded"><code>{{ prompt.template_content }}</code></pre>
+            
+            {% if prompt.variables %}
+            <h6 class="mt-4">Variables</h6>
+            <ul class="list-group">
+                {% for var_name, var_desc in prompt.variables.items() %}
+                <li class="list-group-item">
+                    <strong>{{ var_name }}</strong>: {{ var_desc }}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

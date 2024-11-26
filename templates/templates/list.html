@@ -19,15 +19,21 @@
                     <h5 class="card-title">{{ template.title }}</h5>
                     <p class="card-text">{{ template.description }}</p>
                     <div class="d-flex justify-content-between">
-                        <div>
+                        <div class="btn-group">
                             <a href="{{ url_for('templates.view_template', template_id=template.id) }}" 
-                               class="btn btn-secondary">View</a>
-                            <button type="button" class="btn btn-danger" 
+                               class="btn btn-outline-secondary">
+                                <i class="bi bi-eye"></i> View
+                            </a>
+                            <a href="{{ url_for('templates.edit_template', template_id=template.id) }}" 
+                               class="btn btn-outline-primary">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            <button type="button" class="btn btn-outline-danger" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#deleteModal" 
                                     data-template-id="{{ template.id }}"
                                     data-template-title="{{ template.title }}">
-                                Delete
+                                <i class="bi bi-trash"></i> Delete
                             </button>
                         </div>
                         <a href="{{ url_for('questionnaires.respond', template_id=template.id) }}" 

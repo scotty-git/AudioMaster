@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Template{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Edit Template</h1>
+        <a href="{{ url_for('templates.list_templates') }}" class="btn btn-outline-secondary">
+            Back to List
+        </a>
+    </div>
+
+    <form id="editTemplateForm" method="POST">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" 
+                           value="{{ template.title }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" 
+                              rows="3">{{ template.description }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="sections" class="form-label">Sections</label>
+                    <div id="sectionsContainer">
+                        {% for section in template.sections %}
+                        <div class="section-item card mb-3">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Section Title</label>
+                                    <input type="text" class="form-control section-title" 
+                                           value="{{ section.title }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Questions</label>
+                                    <div class="questions-container">
+                                        {% for question in section.questions %}
+                                        <div class="question-item input-group mb-2">
+                                            <input type="text" class="form-control question-text" 
+                                                   value="{{ question }}" required>
+                                            <button type="button" class="btn btn-outline-danger remove-question">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    <button type="button" class="btn btn-outline-secondary add-question">
+                                        <i class="bi bi-plus"></i> Add Question
+                                    </button>
+                                </div>
+                                <button type="button" class="btn btn-outline-danger remove-section">
+                                    <i class="bi bi-trash"></i> Remove Section
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" class="btn btn-outline-primary" id="addSection">
+                        <i class="bi bi-plus"></i> Add Section
+                    </button>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="is_active" 
+                           name="is_active" {% if template.is_active %}checked{% endif %}>
+                    <label class="form-check-label" for="is_active">
+                        Active
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a href="{{ url_for('templates.view_template', template_id=template.id) }}" 
+               class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('editTemplateForm');
+    const sectionsContainer = document.getElementById('sectionsContainer');
+    
+    // Add new section
+    document.getElementById('addSection').addEventListener('click', function() {
+        const sectionHtml = `
+            <div class="section-item card mb-3">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Section Title</label>
+                        <input type="text" class="form-control section-title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Questions</label>
+                        <div class="questions-container">
+                            <div class="question-item input-group mb-2">
+                                <input type="text" class="form-control question-text" required>
+                                <button type="button" class="btn btn-outline-danger remove-question">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary add-question">
+                            <i class="bi bi-plus"></i> Add Question
+                        </button>
+                    </div>
+                    <button type="button" class="btn btn-outline-danger remove-section">
+                        <i class="bi bi-trash"></i> Remove Section
+                    </button>
+                </div>
+            </div>
+        `;
+        sectionsContainer.insertAdjacentHTML('beforeend', sectionHtml);
+    });
+    
+    // Event delegation for dynamic elements
+    document.addEventListener('click', function(e) {
+        if (e.target.matches('.add-question') || e.target.closest('.add-question')) {
+            const questionsContainer = e.target.closest('.card-body').querySelector('.questions-container');
+            const questionHtml = `
+                <div class="question-item input-group mb-2">
+                    <input type="text" class="form-control question-text" required>
+                    <button type="button" class="btn btn-outline-danger remove-question">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            `;
+            questionsContainer.insertAdjacentHTML('beforeend', questionHtml);
+        }
+        
+        if (e.target.matches('.remove-question') || e.target.closest('.remove-question')) {
+            const questionItem = e.target.closest('.question-item');
+            questionItem.remove();
+        }
+        
+        if (e.target.matches('.remove-section') || e.target.closest('.remove-section')) {
+            const sectionItem = e.target.closest('.section-item');
+            sectionItem.remove();
+        }
+    });
+    
+    // Form submission
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Collect form data
+        const formData = {
+            title: document.getElementById('title').value,
+            description: document.getElementById('description').value,
+            is_active: document.getElementById('is_active').checked,
+            sections: []
+        };
+        
+        // Collect sections data
+        document.querySelectorAll('.section-item').forEach(section => {
+            const sectionData = {
+                title: section.querySelector('.section-title').value,
+                questions: []
+            };
+            
+            section.querySelectorAll('.question-text').forEach(question => {
+                sectionData.questions.push(question.value);
+            });
+            
+            formData.sections.push(sectionData);
+        });
+        
+        try {
+            const response = await fetch(window.location.href, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                window.location.href = data.redirect_url;
+            } else {
+                alert(data.message || 'Error updating template');
+            }
+        } catch (error) {
+            alert('Error saving changes. Please try again.');
+            console.error('Error:', error);
+        }
+    });
+});
+</script>
+{% endblock %}

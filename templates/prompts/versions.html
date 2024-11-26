@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Version History - {{ prompt.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Version History</h1>
+            <p class="text-muted">{{ prompt.name }}</p>
+        </div>
+        <div>
+            <a href="{{ url_for('prompts.view_prompt', prompt_id=prompt.id) }}" class="btn btn-outline-secondary">
+                Back to Current Version
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="list-group">
+                {% for version in versions %}
+                <a href="{{ url_for('prompts.view_version', prompt_id=prompt.id, version=version.version) }}" 
+                   class="list-group-item list-group-item-action">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1">Version {{ version.version }}</h5>
+                            <p class="mb-1">{{ version.name }}</p>
+                            <small class="text-muted">
+                                Created {{ version.created_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                                {% if version.editor %}
+                                by {{ version.editor.username }}
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-primary" onclick="restoreVersion(event, {{ version.version }})">
+                                Restore
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="viewDiff(event, {{ version.version }})">
+                                View Changes
+                            </button>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function restoreVersion(event, version) {
+    event.preventDefault();
+    
+    if (!confirm('Are you sure you want to restore this version? This will create a new version with this content.')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`{{ url_for('prompts.restore_version', prompt_id=prompt.id, version=0) }}`.replace('0', version), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            window.location.href = data.redirect_url;
+        } else {
+            alert(data.message || 'Error restoring version');
+        }
+    } catch (error) {
+        alert('Error restoring version. Please try again.');
+    }
+}
+
+function viewDiff(event, version) {
+    event.preventDefault();
+    // TODO: Implement diff view functionality
+    alert('Diff view coming soon!');
+}
+</script>
+{% endblock %}

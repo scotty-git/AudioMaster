@@ -68,9 +68,53 @@ class PromptTemplate(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
-    type = db.Column(db.String(20), nullable=False)  # 'outline' or 'chapter'
+    type = db.Column(db.String(20), nullable=False)
     template_content = db.Column(db.Text, nullable=False)
-    variables = db.Column(db.JSON)  # Store variable definitions
+    variables = db.Column(db.JSON)
     is_active = db.Column(db.Boolean, default=True)
+    version = db.Column(db.Integer, default=1)
+    last_edited_by = db.Column(db.String(36), db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    editor = db.relationship('User', foreign_keys=[last_edited_by])
+    versions = db.relationship('PromptTemplateVersion', backref='template', lazy='dynamic')
+    
+    def create_version(self, user_id):
+        """Create a new version of this template"""
+        version = PromptTemplateVersion(
+            prompt_template_id=self.id,
+            version=self.version,
+            name=self.name,
+            description=self.description,
+            type=self.type,
+            template_content=self.template_content,
+            variables=self.variables,
+            edited_by=user_id
+        )
+        db.session.add(version)
+        self.version += 1
+        self.last_edited_by = user_id
+        return version
+
+class PromptTemplateVersion(db.Model):
+    __tablename__ = 'prompt_template_versions'
+    
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    prompt_template_id = db.Column(db.String(36), db.ForeignKey('prompt_templates.id'), nullable=False)
+    version = db.Column(db.Integer, nullable=False)
+    name = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text)
+    type = db.Column(db.String(20), nullable=False)
+    template_content = db.Column(db.Text, nullable=False)
+    variables = db.Column(db.JSON)
+    edited_by = db.Column(db.String(36), db.ForeignKey('users.id'))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    editor = db.relationship('User', foreign_keys=[edited_by])
+    
+    __table_args__ = (
+        db.UniqueConstraint('prompt_template_id', 'version', name='uix_template_version'),
+    )

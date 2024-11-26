@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Prompt Template{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Edit Prompt Template</h1>
+        <a href="{{ url_for('prompts.list_prompts') }}" class="btn btn-outline-secondary">
+            Back to List
+        </a>
+    </div>
+
+    <form id="editPromptForm" method="POST">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" 
+                           value="{{ prompt.name }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" 
+                              rows="3">{{ prompt.description }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="type" class="form-label">Type</label>
+                    <input type="text" class="form-control" id="type" name="type" 
+                           value="{{ prompt.type }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="template_content" class="form-label">Template Content</label>
+                    <textarea class="form-control font-monospace" id="template_content" 
+                              name="template_content" rows="15" required>{{ prompt.template_content }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="variables" class="form-label">Variables (JSON)</label>
+                    <textarea class="form-control font-monospace" id="variables" 
+                              name="variables" rows="5">{{ prompt.variables|tojson(indent=2) }}</textarea>
+                    <div class="form-text">Enter variables as a JSON object</div>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="is_active" 
+                           name="is_active" {% if prompt.is_active %}checked{% endif %}>
+                    <label class="form-check-label" for="is_active">
+                        Active
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-outline-secondary" 
+                    onclick="window.location.href='{{ url_for('prompts.list_prompts') }}'">
+                Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">
+                Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.getElementById('editPromptForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Get form data
+    const formData = {
+        name: document.getElementById('name').value,
+        description: document.getElementById('description').value,
+        type: document.getElementById('type').value,
+        template_content: document.getElementById('template_content').value,
+        is_active: document.getElementById('is_active').checked
+    };
+    
+    // Parse variables JSON
+    try {
+        formData.variables = JSON.parse(document.getElementById('variables').value);
+    } catch (error) {
+        alert('Invalid JSON in variables field');
+        return;
+    }
+    
+    try {
+        const response = await fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            window.location.href = data.redirect_url;
+        } else {
+            alert(data.message || 'Error updating prompt template');
+        }
+    } catch (error) {
+        alert('Error saving changes. Please try again.');
+    }
+});
+</script>
+{% endblock %}

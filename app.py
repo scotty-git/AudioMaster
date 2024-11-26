@@ -26,6 +26,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['OPENAI_API_KEY'] = os.environ.get('OPENAI_API_KEY')
+    app.config['DEFAULT_USER_ID'] = '00000000-0000-0000-0000-000000000000'  # Default user ID for versioning
     
     # Initialize extensions
     db.init_app(app)

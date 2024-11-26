@@ -1,126 +1,110 @@
-2024-11-26 14:07:36,951 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:42]
-2024-11-26 14:07:43,481 ERROR: Exception on /templates [GET] [in /home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py:875]
+2024-11-26 20:29:23,140 ERROR: Exception on /templates [GET] [in /Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py:875]
 Traceback (most recent call last):
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
-    self.dialect.do_execute(
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
-    cursor.execute(statement, parameters)
-psycopg2.errors.UndefinedTable: relation "templates" does not exist
-LINE 2: FROM templates 
-             ^
-
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
     response = self.full_dispatch_request()
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
     rv = self.handle_user_exception(e)
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
          ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/routes/templates.py", line 9, in list_templates
-    templates = Template.query.filter_by(is_active=True).all()
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2673, in all
-    return self._iter().all()  # type: ignore
-           ^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2827, in _iter
-    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
-                                                  ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2362, in execute
-    return self._execute_internal(
-           ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2247, in _execute_internal
-    result: Result[Any] = compile_state_cls.orm_execute_statement(
-                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 305, in orm_execute_statement
-    result = conn.execute(
-             ^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1418, in execute
-    return meth(
-           ^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 515, in _execute_on_connection
-    return connection._execute_clauseelement(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1640, in _execute_clauseelement
-    ret = self._execute_context(
-          ^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
-    return self._exec_single_context(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
-    self._handle_dbapi_exception(
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
-    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
-    self.dialect.do_execute(
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
-    cursor.execute(statement, parameters)
-sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedTable) relation "templates" does not exist
-LINE 2: FROM templates 
-             ^
-
-[SQL: SELECT templates.id AS templates_id, templates.title AS templates_title, templates.description AS templates_description, templates.sections AS templates_sections, templates.version AS templates_version, templates.is_active AS templates_is_active, templates.created_at AS templates_created_at, templates.updated_at AS templates_updated_at 
-FROM templates 
-WHERE templates.is_active = true]
-(Background on this error at: https://sqlalche.me/e/20/f405)
-2024-11-26 14:08:19,964 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:42]
-2024-11-26 14:08:25,690 ERROR: Exception on /templates [GET] [in /home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py:875]
-Traceback (most recent call last):
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
-    response = self.full_dispatch_request()
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-         ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/routes/templates.py", line 10, in list_templates
+  File "/Users/calsmith/CascadeProjects/AudioMaster/routes/templates.py", line 10, in list_templates
     return render_template('templates/list.html', templates=templates)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/templating.py", line 150, in render_template
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/templating.py", line 150, in render_template
     return _render(app, template, context)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/templating.py", line 127, in _render
-    app.update_template_context(context)
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 530, in update_template_context
-    context.update(self.ensure_sync(func)())
-                   ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask_login/utils.py", line 405, in _user_context_processor
-    return dict(current_user=_get_user())
-                             ^^^^^^^^^^^
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask_login/utils.py", line 370, in _get_user
-    current_app.login_manager._load_user()
-  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask_login/login_manager.py", line 347, in _load_user
-    raise Exception(
-Exception: Missing user_loader or request_loader. Refer to http://flask-login.readthedocs.io/#how-it-works for more info.
-2024-11-26 14:08:48,906 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:42]
-2024-11-26 14:11:31,520 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:12:43,871 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:13:05,943 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:13:16,750 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:15:43,041 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:16:47,751 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:17:10,752 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:17:12,164 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:17:13,462 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:17:14,756 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:17:26,194 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:17:27,165 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:17:48,401 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:18:26,744 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:18:50,291 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:19:05,080 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:21:22,539 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
-2024-11-26 14:24:10,621 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/jinja2/environment.py", line 1304, in render
+    self.environment.handle_exception()
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/jinja2/environment.py", line 939, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/calsmith/CascadeProjects/AudioMaster/templates/templates/list.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/calsmith/CascadeProjects/AudioMaster/templates/base.html", line 83, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/templates/templates/list.html", line 27, in block 'content'
+    <a href="{{ url_for('templates.edit_template', template_id=template.id) }}"
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 922, in build
+    rv = self._partial_build(endpoint, values, method, append_unknown)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 801, in _partial_build
+    rv = self._partial_build(
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 814, in _partial_build
+    build_rv = rule.build(values, append_unknown)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/rules.py", line 850, in build
+    return self._build_unknown(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<werkzeug routing>", line 1, in <builder:'/templates/<int:template_id>/edit'>
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/converters.py", line 163, in to_url
+    value_str = str(self.num_convert(value))
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'aeba01b9-b8bd-4626-9d8f-92e60dea0d70'
+2024-11-26 20:30:19,952 ERROR: Exception on /templates [GET] [in /Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py:875]
+Traceback (most recent call last):
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/routes/templates.py", line 10, in list_templates
+    return render_template('templates/list.html', templates=templates)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/jinja2/environment.py", line 1304, in render
+    self.environment.handle_exception()
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/jinja2/environment.py", line 939, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/calsmith/CascadeProjects/AudioMaster/templates/templates/list.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/calsmith/CascadeProjects/AudioMaster/templates/base.html", line 83, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/templates/templates/list.html", line 27, in block 'content'
+    <a href="{{ url_for('templates.edit_template', template_id=template.id) }}"
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 922, in build
+    rv = self._partial_build(endpoint, values, method, append_unknown)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 801, in _partial_build
+    rv = self._partial_build(
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 814, in _partial_build
+    build_rv = rule.build(values, append_unknown)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/rules.py", line 850, in build
+    return self._build_unknown(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<werkzeug routing>", line 1, in <builder:'/templates/<int:template_id>/edit'>
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/converters.py", line 163, in to_url
+    value_str = str(self.num_convert(value))
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'aeba01b9-b8bd-4626-9d8f-92e60dea0d70'
