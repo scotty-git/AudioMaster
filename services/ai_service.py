@@ -11,6 +11,9 @@ class AIService:
             api_key=current_app.config['OPENAI_API_KEY']
         )
         self.max_retries = 3
+        self.base_wait = 1
+        self._verify_api_key()
+
     def _verify_api_key(self):
         """Verify that the OpenAI API key is valid and working."""
         try:
@@ -23,11 +26,15 @@ class AIService:
                 max_tokens=5
             )
             current_app.logger.info("OpenAI API key verification successful")
+        except openai.AuthenticationError as e:
+            current_app.logger.error(f"OpenAI API authentication failed: {str(e)}")
+            raise ValueError("Invalid API key. Please check your OpenAI API key configuration.")
+        except openai.RateLimitError as e:
+            current_app.logger.error(f"OpenAI API rate limit hit during verification: {str(e)}")
+            raise ValueError("Rate limit exceeded. Please try again later.")
         except Exception as e:
             current_app.logger.error(f"OpenAI API key verification failed: {str(e)}")
             raise ValueError("Failed to verify OpenAI API key. Please check your configuration.")
-        self.base_wait = 1
-        self._verify_api_key()
     
     @retry(stop=stop_after_attempt(3), 
            wait=wait_exponential(multiplier=1, min=4, max=10),

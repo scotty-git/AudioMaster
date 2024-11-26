@@ -4,14 +4,44 @@
 
 {% block content %}
 <div class="container">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="position-fixed top-0 start-0 w-100 h-100 d-none" 
+         style="background: rgba(0,0,0,0.7); z-index: 1050;">
+        <div class="position-absolute top-50 start-50 translate-middle text-center text-white">
+            <div class="spinner-border mb-3" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h5 id="loadingMessage">Generating outline...</h5>
+            <div class="progress mt-3" style="width: 200px;">
+                <div id="generationProgress" class="progress-bar progress-bar-striped progress-bar-animated" 
+                     role="progressbar" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Alert -->
+    <div id="errorAlert" class="alert alert-danger alert-dismissible fade show d-none" role="alert">
+        <strong>Error!</strong> <span id="errorMessage"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>{{ outline.chapters.title }}</h1>
-        <form method="POST" action="{{ url_for('audiobooks.generate_audiobook', outline_id=outline.id) }}"
-              style="display: inline;">
-            <button type="submit" class="btn btn-primary">
-                Generate Audiobook
+        <div class="d-flex gap-2">
+            {% if not outline.audiobook %}
+            <form id="generateAudioForm" method="POST" 
+                  action="{{ url_for('audiobooks.generate_audiobook', outline_id=outline.id) }}"
+                  style="display: inline;">
+                <button type="submit" class="btn btn-primary" id="generateAudioBtn">
+                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                    Generate Audiobook
+                </button>
+            </form>
+            {% endif %}
+            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#outlineSettingsModal">
+                <i class="fas fa-cog"></i>
             </button>
-        </form>
+        </div>
     </div>
     
     <div class="card mb-4">
@@ -27,22 +57,40 @@
     
     <div class="chapters">
         {% for chapter in outline.chapters.chapters %}
-        <div class="card mb-4">
+        <div class="card mb-4 outline-chapter" data-chapter="{{ chapter.number }}">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h3 class="card-title mb-0">Chapter {{ chapter.number }}: {{ chapter.title }}</h3>
-                <span class="badge bg-{{ 'success' if outline.audiobook and outline.audiobook.status == 'completed' else 'secondary' }}">
-                    {{ outline.audiobook.status|default('Pending')|title if outline.audiobook else 'Ready for Audio' }}
-                </span>
+                <div class="d-flex align-items-center">
+                    <span class="chapter-number me-3 fs-4">{{ chapter.number }}</span>
+                    <h3 class="card-title mb-0">{{ chapter.title }}</h3>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-{{ 'success' if outline.audiobook and outline.audiobook.status == 'completed' else 'secondary' }}">
+                        {{ outline.audiobook.status|default('Pending')|title if outline.audiobook else 'Ready for Audio' }}
+                    </span>
+                    <button class="btn btn-sm btn-outline-secondary chapter-expand-btn" type="button" 
+                            data-bs-toggle="collapse" data-bs-target="#chapter{{ chapter.number }}Content">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
             </div>
-            <div class="card-body">
-                <p class="lead">{{ chapter.summary }}</p>
-                
-                <h5>Key Points:</h5>
-                <ul class="list-group list-group-flush mb-3">
-                    {% for point in chapter.key_points %}
-                    <li class="list-group-item">{{ point }}</li>
-                    {% endfor %}
-                </ul>
+            <div class="collapse show" id="chapter{{ chapter.number }}Content">
+                <div class="card-body">
+                    <div class="chapter-summary mb-4">
+                        <h5 class="text-primary mb-3">Chapter Summary</h5>
+                        <p class="lead">{{ chapter.summary }}</p>
+                    </div>
+                    
+                    <div class="chapter-key-points">
+                        <h5 class="text-primary mb-3">Key Points</h5>
+                        <ul class="list-group list-group-flush mb-3">
+                            {% for point in chapter.key_points %}
+                            <li class="list-group-item">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                {{ point }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
 
                 {% if outline.audiobook and outline.audiobook.status == 'completed' %}
                 <div class="audio-player">
