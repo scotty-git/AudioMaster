@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flask import redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy.orm import DeclarativeBase
@@ -54,5 +55,10 @@ def create_app():
     app.register_blueprint(questionnaires.bp)
     app.register_blueprint(outlines.bp)
     app.register_blueprint(audiobooks.bp)
+    
+    # Add root route
+    @app.route('/')
+    def index():
+        return redirect(url_for('templates.list_templates'))
     
     return app
