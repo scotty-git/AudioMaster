@@ -31,21 +31,21 @@
                         <div class="btn-group" role="group">
                             <a href="{{ url_for('questionnaires.view_response', response_id=response.id) }}"
                                class="btn btn-secondary btn-sm">View Response</a>
-                            <div class="btn-group" role="group">
-                                <form method="POST" action="{{ url_for('outlines.generate_outline', response_id=response.id) }}"
-                                      style="display: inline;">
-                                    <button type="submit" class="btn btn-primary btn-sm">
-                                        Generate Outline
-                                    </button>
-                                </form>
-                                <button type="button" class="btn btn-danger btn-sm"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteResponseModal"
-                                        data-response-id="{{ response.id }}"
-                                        data-template-title="{{ response.template.title }}">
-                                    Delete
+                            {% if response.status != 'deleted' %}
+                            <form method="POST" action="{{ url_for('outlines.generate_outline', response_id=response.id) }}"
+                                  style="display: inline;">
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    Generate Outline
                                 </button>
-                            </div>
+                            </form>
+                            <button type="button" class="btn btn-danger btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteResponseModal"
+                                    data-response-id="{{ response.id }}"
+                                    data-template-title="{{ response.template.title }}">
+                                Delete
+                            </button>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>
@@ -77,13 +77,10 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form id="deleteResponseForm" method="POST" style="display: inline;">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="btn btn-danger">
-                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                        Delete
-                    </button>
-                </form>
+                <button type="button" id="confirmDeleteBtn" class="btn btn-danger">
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    Delete
+                </button>
             </div>
         </div>
     </div>
@@ -93,40 +90,38 @@
 document.addEventListener('DOMContentLoaded', function() {
     const deleteModal = document.getElementById('deleteResponseModal');
     if (deleteModal) {
+        let currentResponseId = null;
+
         deleteModal.addEventListener('show.bs.modal', function(event) {
             const button = event.relatedTarget;
-            const responseId = button.getAttribute('data-response-id');
+            currentResponseId = button.getAttribute('data-response-id');
             const templateTitle = button.getAttribute('data-template-title');
             
             deleteModal.querySelector('#responseTemplateTitle').textContent = templateTitle;
             deleteModal.querySelector('#deleteError').classList.add('d-none');
-            deleteModal.querySelector('#deleteResponseForm').action = "{{ url_for('questionnaires.delete_response', response_id='') }}" + responseId;
         });
 
-        const deleteForm = deleteModal.querySelector('#deleteResponseForm');
-        deleteForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const spinner = submitBtn.querySelector('.spinner-border');
+        const confirmDeleteBtn = deleteModal.querySelector('#confirmDeleteBtn');
+        confirmDeleteBtn.addEventListener('click', async function() {
+            const spinner = this.querySelector('.spinner-border');
             const errorDiv = deleteModal.querySelector('#deleteError');
             
             // Show loading state
-            submitBtn.disabled = true;
+            this.disabled = true;
             spinner.classList.remove('d-none');
             errorDiv.classList.add('d-none');
             
             try {
-                const response = await fetch(this.action, {
+                const response = await fetch(`/questionnaires/response/${currentResponseId}/delete`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                        'X-CSRFToken': this.querySelector('input[name="csrf_token"]').value
+                        'X-CSRFToken': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({}) // Send empty JSON object to ensure JSON request
+                    body: JSON.stringify({})
                 });
-                
+
                 let data;
                 try {
                     data = await response.json();
@@ -137,17 +132,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (response.ok) {
                     // Remove the response row from the UI
-                    const responseId = this.action.split('/').pop();
-                    const responseRow = document.querySelector(`.response-row[data-response-id="${responseId}"]`);
+                    const responseRow = document.querySelector(`.response-row[data-response-id="${currentResponseId}"]`);
                     if (responseRow) {
                         responseRow.remove();
                     }
                     
-                    // Close modal and show success message
+                    // Close modal
                     const modalInstance = bootstrap.Modal.getInstance(deleteModal);
                     modalInstance.hide();
                     
-                    // Add success alert to the page
+                    // Add success alert
                     const alertDiv = document.createElement('div');
                     alertDiv.className = 'alert alert-success alert-dismissible fade show';
                     alertDiv.innerHTML = `
@@ -155,6 +149,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     `;
                     document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.table-responsive'));
+
+                    // Reload the page if no responses left
+                    const remainingRows = document.querySelectorAll('.response-row');
+                    if (remainingRows.length === 0) {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    }
                 } else {
                     throw new Error(data.message || 'Failed to delete response');
                 }
@@ -177,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 errorDiv.textContent = errorMessage;
                 errorDiv.classList.remove('d-none');
             } finally {
-                submitBtn.disabled = false;
+                this.disabled = false;
                 spinner.classList.add('d-none');
             }
         });

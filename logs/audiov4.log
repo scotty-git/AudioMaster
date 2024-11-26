@@ -90,3 +90,5 @@ jinja2.exceptions.TemplateNotFound: questionnaires/view.html
 2024-11-26 14:45:13,116 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:47]
 2024-11-26 14:45:37,417 ERROR: Error viewing response delete8611a0bc-6483-463b-9a40-0234244c1a43: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again. [in /home/runner/AudioMaster/routes/questionnaires.py:49]
 2024-11-26 14:47:33,276 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:47]
+2024-11-26 14:49:45,588 ERROR: Error viewing response delete8611a0bc-6483-463b-9a40-0234244c1a43: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again. [in /home/runner/AudioMaster/routes/questionnaires.py:50]
+2024-11-26 14:51:22,774 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:47]
