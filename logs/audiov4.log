@@ -77,3 +77,30 @@ Traceback (most recent call last):
     raise TemplateNotFound(template)
 jinja2.exceptions.TemplateNotFound: templates/view.html
 2024-11-26 14:29:00,965 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
+2024-11-26 14:29:54,991 ERROR: Exception on /questionnaires/respond/0883390f-88a2-4604-893b-a8aa5e016741 [POST] [in /home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py:875]
+Traceback (most recent call last):
+  File "/home/runner/AudioMaster/routes/questionnaires.py", line 23, in respond
+    return jsonify({
+           ^^^^^^^
+NameError: name 'jsonify' is not defined
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/routes/questionnaires.py", line 45, in respond
+    current_app.logger.error(f'Error submitting questionnaire response: {str(e)}')
+    ^^^^^^^^^^^
+NameError: name 'current_app' is not defined
+2024-11-26 14:30:43,201 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]

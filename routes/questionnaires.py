@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, current_app
 from models import Template, QuestionnaireResponse, db
 
 bp = Blueprint('questionnaires', __name__)
@@ -42,10 +42,12 @@ def respond(template_id):
 
         except Exception as e:
             db.session.rollback()
-            current_app.logger.error(f'Error submitting questionnaire response: {str(e)}')
+            error_msg = f'Error submitting questionnaire response: {str(e)}'
+            current_app.logger.error(error_msg)
             return jsonify({
                 'success': False,
-                'message': 'An error occurred while submitting your response'
+                'message': 'An error occurred while submitting your response. Please try again.',
+                'error': str(e) if current_app.debug else None
             }), 500
     
     return render_template('questionnaires/respond.html', template=template)
