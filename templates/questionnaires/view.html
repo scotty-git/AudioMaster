@@ -6,12 +6,17 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>{{ response.template.title }}</h1>
-        <form method="POST" action="{{ url_for('outlines.generate_outline', response_id=response.id) }}"
-              style="display: inline;">
-            <button type="submit" class="btn btn-primary">
-                Generate Book Outline
-            </button>
-        </form>
+        <div id="generateOutlineContainer">
+            <form id="generateOutlineForm" method="POST" 
+                  action="{{ url_for('outlines.generate_outline', response_id=response.id) }}"
+                  style="display: inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-primary" id="generateOutlineBtn">
+                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                    <span class="button-text">Generate Book Outline</span>
+                </button>
+            </form>
+        </div>
     </div>
     
     <div class="card mb-4">
@@ -55,4 +60,66 @@
            class="btn btn-outline-secondary">Back to Template</a>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('generateOutlineForm');
+    const btn = document.getElementById('generateOutlineBtn');
+    const spinner = btn.querySelector('.spinner-border');
+    const buttonText = btn.querySelector('.button-text');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Show loading state
+        btn.disabled = true;
+        spinner.classList.remove('d-none');
+        buttonText.textContent = 'Generating...';
+        
+        try {
+            const response = await fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({})
+            });
+
+            let data;
+            try {
+                data = await response.json();
+            } catch (parseError) {
+                console.error('Error parsing response:', parseError);
+                throw new Error('Server returned an invalid response. Please try again later.');
+            }
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to generate outline');
+            }
+
+            if (data.success) {
+                window.location.href = data.redirect_url;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            
+            // Show error alert
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                <strong>Error generating outline:</strong> ${error.message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.querySelector('.container').insertBefore(alertDiv, document.getElementById('generateOutlineContainer'));
+            
+            // Reset button state
+            btn.disabled = false;
+            spinner.classList.add('d-none');
+            buttonText.textContent = 'Generate Book Outline';
+        }
+    });
+});
+</script>
 {% endblock %}
