@@ -55,19 +55,43 @@ def respond(template_id):
 def validate_responses(responses, template_sections):
     """Validate responses against template structure."""
     try:
-        for section_idx, section in enumerate(template_sections):
-            if str(section_idx) not in responses:
-                return False
-            
-            section_responses = responses[str(section_idx)]
-            for question_idx, _ in enumerate(section['questions']):
-                if str(question_idx) not in section_responses:
-                    return False
-                if not section_responses[str(question_idx)].strip():
-                    return False
+        # Debug log the received data structure
+        current_app.logger.debug(f"Validating responses: {responses}")
+        current_app.logger.debug(f"Template sections: {template_sections}")
         
+        # Validate each section
+        for section_idx, section in enumerate(template_sections):
+            section_key = str(section_idx)
+            
+            # Check if section exists in responses
+            if section_key not in responses:
+                current_app.logger.error(f"Missing section {section_key} in responses")
+                return False
+                
+            section_responses = responses[section_key]
+            
+            # Validate each question in the section
+            for question_idx, question in enumerate(section['questions']):
+                question_key = str(question_idx)
+                
+                # Check if question exists in section responses
+                if question_key not in section_responses:
+                    current_app.logger.error(f"Missing question {question_key} in section {section_key}")
+                    return False
+                    
+                # Get response value
+                response_value = section_responses[question_key]
+                
+                # Validate response value based on question type
+                if isinstance(response_value, str) and not response_value.strip():
+                    current_app.logger.error(f"Empty response for section {section_key}, question {question_key}")
+                    return False
+                    
+                # Additional type-specific validation could be added here
+                
         return True
-    except (KeyError, AttributeError, TypeError):
+    except Exception as e:
+        current_app.logger.error(f"Validation error: {str(e)}")
         return False
 
 @bp.route('/questionnaires/response/<response_id>')

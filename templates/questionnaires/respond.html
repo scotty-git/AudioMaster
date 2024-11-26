@@ -109,13 +109,20 @@
         const responses = {};
         
         // Process responses
+        const responses = {};
         for (const [name, value] of formData.entries()) {
-            const [section, question] = name.split('_').slice(1);
-            if (!responses[section]) {
-                responses[section] = {};
+            const matches = name.match(/section_(\d+)_question_(\d+)/);
+            if (matches) {
+                const [_, sectionIdx, questionIdx] = matches;
+                if (!responses[sectionIdx]) {
+                    responses[sectionIdx] = {};
+                }
+                responses[sectionIdx][questionIdx] = value;
             }
-            responses[section][question] = value;
         }
+        
+        // Debug log
+        console.log('Submitting responses:', responses);
         
         updateProgress(30);
 
