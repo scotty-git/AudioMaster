@@ -79,3 +79,8 @@ jinja2.exceptions.TemplateNotFound: questionnaires/view.html
 2024-11-26 14:37:56,514 ERROR: Error viewing response 86c59cf9-3ad9-41f9-9b39-83847c448577: 'jinja2.runtime.LoopContext object' has no attribute 'parent' [in /home/runner/AudioMaster/routes/questionnaires.py:103]
 2024-11-26 14:39:22,923 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
 2024-11-26 14:40:50,867 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
+2024-11-26 14:41:27,539 INFO: Generating outline with OpenAI [in /home/runner/AudioMaster/services/ai_service.py:38]
+2024-11-26 14:41:33,053 ERROR: Invalid JSON in response: Expecting value: line 1 column 1 (char 0) [in /home/runner/AudioMaster/services/ai_service.py:62]
+2024-11-26 14:41:36,202 INFO: Generating outline with OpenAI [in /home/runner/AudioMaster/services/ai_service.py:38]
+2024-11-26 14:41:53,231 INFO: Successfully generated outline [in /home/runner/AudioMaster/services/ai_service.py:52]
+2024-11-26 14:42:21,370 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]

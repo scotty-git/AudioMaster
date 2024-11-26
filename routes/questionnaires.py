@@ -115,3 +115,18 @@ def view_response(response_id):
         current_app.logger.error(f"Error viewing response {response_id}: {str(e)}")
         flash('Error loading questionnaire response. Please try again.', 'error')
         return redirect(url_for('templates.list_templates'))
+
+
+@bp.route('/questionnaires/response/<response_id>/delete', methods=['POST'])
+def delete_response(response_id):
+    try:
+        response = QuestionnaireResponse.query.get_or_404(response_id)
+        # Mark as deleted in the status field instead of actually deleting
+        response.status = 'deleted'
+        db.session.commit()
+        flash('Response deleted successfully!', 'success')
+    except Exception as e:
+        current_app.logger.error(f"Error deleting response {response_id}: {str(e)}")
+        flash('Error deleting response. Please try again.', 'error')
+        db.session.rollback()
+    return redirect(url_for('questionnaires.list_responses'))

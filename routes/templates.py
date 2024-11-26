@@ -56,3 +56,17 @@ def create_template():
 def view_template(template_id):
     template = Template.query.get_or_404(template_id)
     return render_template('templates/view.html', template=template)
+
+
+@bp.route('/templates/<template_id>/delete', methods=['POST'])
+def delete_template(template_id):
+    try:
+        template = Template.query.get_or_404(template_id)
+        template.is_active = False  # Soft delete
+        db.session.commit()
+        flash('Template deleted successfully!', 'success')
+    except Exception as e:
+        current_app.logger.error(f"Error deleting template {template_id}: {str(e)}")
+        flash('Error deleting template. Please try again.', 'error')
+        db.session.rollback()
+    return redirect(url_for('templates.list_templates'))
