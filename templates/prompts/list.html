@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Summary Prompts{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Summary Prompts</h1>
+        <a href="{{ url_for('prompts.create_prompt') }}" class="btn btn-primary">
+            Create Prompt Template
+        </a>
+    </div>
+    
+    <div class="row">
+        {% for prompt in prompts %}
+        <div class="col-md-6 mb-4 prompt-item" data-prompt-id="{{ prompt.id }}">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ prompt.name }}</h5>
+                    <p class="card-text">{{ prompt.description }}</p>
+                    <div class="mb-2">
+                        <span class="badge bg-info">{{ prompt.type|title }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <a href="{{ url_for('prompts.view_prompt', prompt_id=prompt.id) }}" 
+                               class="btn btn-secondary">View</a>
+                            <a href="{{ url_for('prompts.edit_prompt', prompt_id=prompt.id) }}" 
+                               class="btn btn-outline-primary">Edit</a>
+                            <button type="button" class="btn btn-danger" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#deleteModal" 
+                                    data-prompt-id="{{ prompt.id }}"
+                                    data-prompt-name="{{ prompt.name }}">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if not prompts %}
+    <div class="text-center py-5">
+        <p class="lead text-muted">No prompt templates yet.</p>
+        <a href="{{ url_for('prompts.create_prompt') }}" class="btn btn-primary">
+            Create Your First Prompt Template
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger d-none" id="deleteError"></div>
+                Are you sure you want to delete the prompt template "<span id="promptName"></span>"?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger">
+                        <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteModal = document.getElementById('deleteModal');
+    if (deleteModal) {
+        deleteModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const promptId = button.getAttribute('data-prompt-id');
+            const promptName = button.getAttribute('data-prompt-name');
+            
+            deleteModal.querySelector('#promptName').textContent = promptName;
+            deleteModal.querySelector('#deleteError').classList.add('d-none');
+            deleteModal.querySelector('#deleteForm').action = "{{ url_for('prompts.delete_prompt', prompt_id='') }}" + promptId;
+        });
+
+        const deleteForm = deleteModal.querySelector('#deleteForm');
+        deleteForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const spinner = submitBtn.querySelector('.spinner-border');
+            const errorDiv = deleteModal.querySelector('#deleteError');
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            spinner.classList.remove('d-none');
+            errorDiv.classList.add('d-none');
+            
+            try {
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.querySelector('input[name="csrf_token"]').value
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Remove the prompt card from the UI
+                    const promptId = this.action.split('/').pop();
+                    const promptCard = document.querySelector(`.prompt-item[data-prompt-id="${promptId}"]`);
+                    if (promptCard) {
+                        promptCard.remove();
+                    }
+                    
+                    // Close modal and show success message
+                    const modalInstance = bootstrap.Modal.getInstance(deleteModal);
+                    modalInstance.hide();
+                    
+                    // Add success alert
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-success alert-dismissible fade show';
+                    alertDiv.innerHTML = `
+                        ${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.row'));
+                } else {
+                    throw new Error(data.message || 'Failed to delete prompt template');
+                }
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.remove('d-none');
+            } finally {
+                submitBtn.disabled = false;
+                spinner.classList.add('d-none');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

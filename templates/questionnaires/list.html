@@ -34,6 +34,7 @@
                             {% if response.status != 'deleted' %}
                             <form method="POST" action="{{ url_for('outlines.generate_outline', response_id=response.id) }}"
                                   style="display: inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit" class="btn btn-primary btn-sm">
                                     Generate Outline
                                 </button>

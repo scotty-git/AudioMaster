@@ -24,6 +24,10 @@
                         <a class="nav-link {% if request.endpoint and request.endpoint.startswith('questionnaires.') %}active{% endif %}" 
                            href="{{ url_for('questionnaires.list_responses') }}">Questionnaire Responses</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint and request.endpoint.startswith('prompts.') %}active{% endif %}" 
+                           href="{{ url_for('prompts.list_prompts') }}">Summary Prompts</a>
+                    </li>
                 </ul>
             </div>
         </div>

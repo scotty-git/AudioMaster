@@ -1,11 +1,27 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, current_app
 from models import QuestionnaireResponse, BookOutline, db
 from services.ai_service import AIService
+from flask_wtf.csrf import validate_csrf, ValidationError
 
 bp = Blueprint('outlines', __name__)
 
 @bp.route('/outlines/generate/<response_id>', methods=['POST'])
 def generate_outline(response_id):
+    # Validate CSRF token
+    try:
+        if request.is_json:
+            validate_csrf(request.headers.get('X-CSRFToken'))
+        else:
+            validate_csrf(request.form.get('csrf_token'))
+    except ValidationError:
+        current_app.logger.error("CSRF validation failed for outline generation")
+        if request.is_json:
+            return jsonify({
+                'success': False,
+                'message': 'Invalid CSRF token'
+            }), 400
+        flash('Invalid CSRF token', 'error')
+        return redirect(url_for('questionnaires.view_response', response_id=response_id))
     response = QuestionnaireResponse.query.get_or_404(response_id)
     ai_service = AIService()
     

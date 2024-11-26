@@ -61,3 +61,16 @@ class Audiobook(db.Model):
     status = db.Column(db.String(20), default='generating')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class PromptTemplate(db.Model):
+    __tablename__ = 'prompt_templates'
+    
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text)
+    type = db.Column(db.String(20), nullable=False)  # 'outline' or 'chapter'
+    template_content = db.Column(db.Text, nullable=False)
+    variables = db.Column(db.JSON)  # Store variable definitions
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
