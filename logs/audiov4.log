@@ -4,3 +4,46 @@
 2024-11-26 15:08:00,974 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:47]
 2024-11-26 15:10:01,650 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:47]
 2024-11-26 15:12:44,111 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:47]
+2024-11-26 15:15:51,846 ERROR: Exception on /prompts/3d0d57b3-fd21-480a-84a5-23efaeedd618 [GET] [in /home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py:875]
+Traceback (most recent call last):
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/routes/prompts.py", line 82, in view_prompt
+    return render_template('prompts/view.html', prompt=prompt)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/templating.py", line 149, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/jinja2/environment.py", line 1084, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/jinja2/environment.py", line 1013, in get_template
+    return self._load_template(name, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/jinja2/environment.py", line 972, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/jinja2/loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: prompts/view.html
+2024-11-26 15:16:10,358 INFO: OpenAI API key verification successful [in /home/runner/AudioMaster/services/ai_service.py:28]
+2024-11-26 15:16:10,359 INFO: Starting outline generation for response 8611a0bc-6483-463b-9a40-0234244c1a43 [in /home/runner/AudioMaster/routes/outlines.py:73]
+2024-11-26 15:16:10,362 INFO: Generating outline with OpenAI [in /home/runner/AudioMaster/services/ai_service.py:45]
+2024-11-26 15:16:20,943 INFO: Successfully generated outline [in /home/runner/AudioMaster/services/ai_service.py:59]
+2024-11-26 15:16:21,928 INFO: Outline saved to database with id baec63dc-3c4e-424b-b004-12973428a8fe [in /home/runner/AudioMaster/routes/outlines.py:83]
