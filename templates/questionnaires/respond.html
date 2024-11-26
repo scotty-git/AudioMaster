@@ -23,22 +23,23 @@
                 <h3 class="card-title mb-0">{{ section.title }}</h3>
             </div>
             <div class="card-body">
+                {% set outer_loop = loop %}
                 {% for question in section.questions %}
                 <div class="mb-4">
                     <label class="form-label">{{ question.text }}</label>
                     {% if question.type == 'text' %}
                         <input type="text" class="form-control" 
-                               name="section_{{ loop.parent.loop.index0 }}_question_{{ loop.index0 }}" required>
+                               name="section_{{ outer_loop.index0 }}_question_{{ loop.index0 }}" required>
                     {% elif question.type == 'textarea' %}
                         <textarea class="form-control" 
-                                name="section_{{ loop.parent.loop.index0 }}_question_{{ loop.index0 }}" 
+                                name="section_{{ outer_loop.index0 }}_question_{{ loop.index0 }}" 
                                 rows="3" required></textarea>
                     {% elif question.type == 'number' %}
                         <input type="number" class="form-control" 
-                               name="section_{{ loop.parent.loop.index0 }}_question_{{ loop.index0 }}" required>
+                               name="section_{{ outer_loop.index0 }}_question_{{ loop.index0 }}" required>
                     {% elif question.type == 'select' %}
                         <select class="form-select" 
-                                name="section_{{ loop.parent.loop.index0 }}_question_{{ loop.index0 }}" required>
+                                name="section_{{ outer_loop.index0 }}_question_{{ loop.index0 }}" required>
                             {% for option in question.options %}
                                 <option value="{{ option }}">{{ option }}</option>
                             {% endfor %}
