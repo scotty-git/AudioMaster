@@ -34,9 +34,20 @@
                   style="display: inline;">
                 <button type="submit" class="btn btn-primary" id="generateAudioBtn">
                     <span class="spinner-border spinner-border-sm d-none" role="status"></span>
-                    Generate Audiobook
+                    <span class="button-text">Generate Audiobook</span>
                 </button>
             </form>
+            <script>
+                document.getElementById('generateAudioForm').addEventListener('submit', function(e) {
+                    const btn = this.querySelector('#generateAudioBtn');
+                    const spinner = btn.querySelector('.spinner-border');
+                    const buttonText = btn.querySelector('.button-text');
+                    
+                    btn.disabled = true;
+                    spinner.classList.remove('d-none');
+                    buttonText.textContent = 'Generating...';
+                });
+            </script>
             {% endif %}
             <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#outlineSettingsModal">
                 <i class="fas fa-cog"></i>

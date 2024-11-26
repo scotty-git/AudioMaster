@@ -7,6 +7,44 @@ bp = Blueprint('prompts', __name__)
 @bp.route('/prompts')
 def list_prompts():
     prompts = PromptTemplate.query.filter_by(is_active=True).all()
+    
+    if not prompts:
+        # Create default prompt template
+        default_prompt = PromptTemplate(
+            name="Default Book Outline Generator",
+            description="Default template for generating book outlines from questionnaire responses",
+            type="outline",
+            template_content='''Based on the following questionnaire responses, create a detailed book outline optimized for audio format and engaging listening experience:
+
+{responses}
+
+Please create a well-structured outline that:
+1. Maintains a clear narrative flow between chapters
+2. Ensures each chapter builds upon previous content
+3. Includes transition points between major topics
+4. Considers the audio listening experience
+
+Create a JSON response with the following structure:
+{
+    "title": "Book Title",
+    "chapters": [
+        {
+            "number": 1,
+            "title": "Chapter Title",
+            "summary": "Detailed chapter summary including main themes and flow",
+            "key_points": ["Specific key point 1", "Specific key point 2"],
+            "estimated_duration": "15-20 minutes"
+        }
+    ]
+}
+
+Ensure each chapter is substantial enough for audio content but not too long for comfortable listening.''',
+            variables={"responses": "JSON object containing questionnaire responses"}
+        )
+        db.session.add(default_prompt)
+        db.session.commit()
+        prompts = [default_prompt]
+        
     return render_template('prompts/list.html', prompts=prompts)
 
 @bp.route('/prompts/create', methods=['GET', 'POST'])
