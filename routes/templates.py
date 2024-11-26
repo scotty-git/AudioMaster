@@ -12,8 +12,39 @@ def list_templates():
 @bp.route('/templates/create', methods=['GET', 'POST'])
 def create_template():
     if request.method == 'POST':
+        # Check Content-Type header
+        if not request.is_json:
+            current_app.logger.error("Invalid Content-Type header for template creation")
+            return jsonify({
+                'success': False,
+                'message': 'Invalid request format. Expected JSON.'
+            }), 400
+
+        # Validate CSRF token
+        try:
+            csrf_token = request.headers.get('X-CSRFToken')
+            if not csrf_token:
+                current_app.logger.error("Missing CSRF token for template creation")
+                return jsonify({
+                    'success': False,
+                    'message': 'Missing CSRF token'
+                }), 400
+            validate_csrf(csrf_token)
+        except ValidationError as e:
+            current_app.logger.error(f"CSRF validation failed: {str(e)}")
+            return jsonify({
+                'success': False,
+                'message': 'Invalid CSRF token'
+            }), 400
+
         try:
             data = request.get_json()
+            if not all(key in data for key in ['title', 'description', 'sections']):
+                return jsonify({
+                    'success': False,
+                    'message': 'Missing required fields'
+                }), 400
+
             template = Template(
                 title=data['title'],
                 description=data['description'],
@@ -27,8 +58,15 @@ def create_template():
                 'message': 'Template created successfully!',
                 'redirect_url': url_for('templates.view_template', template_id=template.id)
             })
+        except ValueError as e:
+            current_app.logger.error(f"Validation error: {str(e)}")
+            return jsonify({
+                'success': False,
+                'message': str(e)
+            }), 400
         except Exception as e:
             current_app.logger.error(f"Error creating template: {str(e)}")
+            db.session.rollback()
             return jsonify({
                 'success': False,
                 'message': 'Failed to create template. Please try again.'

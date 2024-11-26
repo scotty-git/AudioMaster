@@ -17,8 +17,39 @@ def respond(template_id):
     template = Template.query.get_or_404(template_id)
     
     if request.method == 'POST':
+        # Check Content-Type header
+        if not request.is_json:
+            current_app.logger.error("Invalid Content-Type header for questionnaire response")
+            return jsonify({
+                'success': False,
+                'message': 'Invalid request format. Expected JSON.'
+            }), 400
+
+        # Validate CSRF token
+        try:
+            csrf_token = request.headers.get('X-CSRFToken')
+            if not csrf_token:
+                current_app.logger.error("Missing CSRF token for questionnaire response")
+                return jsonify({
+                    'success': False,
+                    'message': 'Missing CSRF token'
+                }), 400
+            validate_csrf(csrf_token)
+        except ValidationError as e:
+            current_app.logger.error(f"CSRF validation failed: {str(e)}")
+            return jsonify({
+                'success': False,
+                'message': 'Invalid CSRF token'
+            }), 400
+
         try:
             data = request.get_json()
+            if not isinstance(data, dict):
+                return jsonify({
+                    'success': False,
+                    'message': 'Invalid response format'
+                }), 400
+
             response = QuestionnaireResponse(
                 template_id=template_id,
                 responses=data,
@@ -32,8 +63,15 @@ def respond(template_id):
                 'message': 'Response submitted successfully!',
                 'redirect_url': url_for('questionnaires.view_response', response_id=response.id)
             })
+        except ValueError as e:
+            current_app.logger.error(f"Validation error: {str(e)}")
+            return jsonify({
+                'success': False,
+                'message': str(e)
+            }), 400
         except Exception as e:
             current_app.logger.error(f"Error submitting response: {str(e)}")
+            db.session.rollback()
             return jsonify({
                 'success': False,
                 'message': 'Failed to submit response. Please try again.'

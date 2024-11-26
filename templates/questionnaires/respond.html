@@ -1,22 +1,23 @@
 {% extends "base.html" %}
 
-{% block title %}Respond to Questionnaire{% endblock %}
+{% block title %}Respond to Template{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1 class="mb-4">{{ template.title }}</h1>
+    <h1>{{ template.title }}</h1>
     <p class="lead mb-4">{{ template.description }}</p>
     
     <form method="POST" id="questionnaire-form">
-    <!-- Progress tracking -->
-    <div id="progress-container" class="mb-4 d-none">
-        <h5>Submission Progress</h5>
-        <div class="progress">
-            <div id="submission-progress" class="progress-bar progress-bar-striped progress-bar-animated"
-                 role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        <!-- Progress tracking -->
+        <div id="progress-container" class="mb-4 d-none">
+            <h5>Submission Progress</h5>
+            <div class="progress">
+                <div id="submission-progress" class="progress-bar progress-bar-striped progress-bar-animated"
+                     role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <small id="progress-text" class="text-muted">0% Complete</small>
         </div>
-        <small id="progress-text" class="text-muted">0% Complete</small>
-    </div>
+        
         {% for section in template.sections %}
         <div class="card mb-4">
             <div class="card-header">
@@ -60,130 +61,134 @@
 </div>
 
 <script>
-    function validateForm() {
-        const form = document.getElementById('questionnaire-form');
-        const inputs = form.querySelectorAll('input, textarea, select');
-        let isValid = true;
-        
-        inputs.forEach(input => {
-            if (input.hasAttribute('required') && !input.value.trim()) {
-                input.classList.add('is-invalid');
-                isValid = false;
-            } else {
-                input.classList.remove('is-invalid');
+    document.addEventListener('DOMContentLoaded', function() {
+        function validateForm() {
+            const form = document.getElementById('questionnaire-form');
+            const inputs = form.querySelectorAll('input, textarea, select');
+            let isValid = true;
+            
+            inputs.forEach(input => {
+                if (input.hasAttribute('required') && !input.value.trim()) {
+                    input.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+            
+            return isValid;
+        }
+
+        function updateProgress(progress) {
+            const progressBar = document.getElementById('submission-progress');
+            const progressText = document.getElementById('progress-text');
+            
+            progressBar.style.width = `${progress}%`;
+            progressBar.setAttribute('aria-valuenow', progress);
+            progressText.textContent = `${progress}% Complete`;
+        }
+
+        document.getElementById('questionnaire-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+                alertDiv.innerHTML = `
+                    Please fill in all required fields
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                this.insertBefore(alertDiv, this.firstChild);
+                return;
+            }
+
+            // Show progress container
+            document.getElementById('progress-container').classList.remove('d-none');
+            updateProgress(10);
+
+            // Collect form data
+            const formData = new FormData(this);
+            const responses = {};
+            
+            // Process responses
+            for (const [name, value] of formData.entries()) {
+                const matches = name.match(/section_(\d+)_question_(\d+)/);
+                if (matches) {
+                    const [_, sectionIdx, questionIdx] = matches;
+                    if (!responses[sectionIdx]) {
+                        responses[sectionIdx] = {};
+                    }
+                    responses[sectionIdx][questionIdx] = value.trim();
+                }
+            }
+            
+            updateProgress(30);
+
+            try {
+                // Submit form with JSON data
+                const response = await fetch(window.location.href, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify(responses)
+                });
+
+                updateProgress(60);
+
+                let data;
+                try {
+                    data = await response.json();
+                } catch (parseError) {
+                    console.error('Error parsing response:', parseError);
+                    throw new Error('Server returned an invalid response. Please try again later.');
+                }
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to submit responses');
+                }
+
+                updateProgress(100);
+
+                if (data.success) {
+                    window.location.href = data.redirect_url;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('progress-container').classList.add('d-none');
+                
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+                let errorMessage = error.message;
+                
+                // Add more context to common errors
+                if (errorMessage.includes('Invalid or incomplete')) {
+                    errorMessage += '. Please ensure all required fields are filled correctly.';
+                } else if (errorMessage.includes('validation')) {
+                    errorMessage += '. Please check your responses and try again.';
+                } else if (errorMessage.includes('CSRF')) {
+                    errorMessage = 'Security validation failed. Please refresh the page and try again.';
+                }
+                
+                alertDiv.innerHTML = `
+                    <strong>Error submitting questionnaire:</strong> ${errorMessage}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                this.insertBefore(alertDiv, this.firstChild);
             }
         });
-        
-        return isValid;
-    }
 
-    function updateProgress(progress) {
-        const progressBar = document.getElementById('submission-progress');
-        const progressText = document.getElementById('progress-text');
-        
-        progressBar.style.width = `${progress}%`;
-        progressBar.setAttribute('aria-valuenow', progress);
-        progressText.textContent = `${progress}% Complete`;
-    }
-
-    document.getElementById('questionnaire-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        if (!validateForm()) {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-            alertDiv.innerHTML = `
-                Please fill in all required fields
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            this.insertBefore(alertDiv, this.firstChild);
-            return;
-        }
-
-        // Show progress container
-        document.getElementById('progress-container').classList.remove('d-none');
-        updateProgress(10);
-
-        // Collect form data
-        const formData = new FormData(this);
-        const responses = {};
-        
-        // Process responses
-        console.log('Processing form data...');
-        for (const [name, value] of formData.entries()) {
-            console.log('Processing field:', name, 'with value:', value);
-            const matches = name.match(/section_(\d+)_question_(\d+)/);
-            if (matches) {
-                const [_, sectionIdx, questionIdx] = matches;
-                if (!responses[sectionIdx]) {
-                    responses[sectionIdx] = {};
+        // Add input validation on blur
+        document.querySelectorAll('input, textarea, select').forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.hasAttribute('required') && !this.value.trim()) {
+                    this.classList.add('is-invalid');
+                } else {
+                    this.classList.remove('is-invalid');
                 }
-                responses[sectionIdx][questionIdx] = value.trim();
-                console.log(`Added response for section ${sectionIdx}, question ${questionIdx}`);
-            }
-        }
-        
-        // Debug log final structure
-        console.log('Final response structure:', JSON.stringify(responses, null, 2));
-        
-        updateProgress(30);
-
-        try {
-            // Submit form with JSON data
-            const response = await fetch(window.location.href, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(responses)
             });
-
-            updateProgress(60);
-
-            const data = await response.json();
-            
-            if (!response.ok) {
-                const errorMessage = data.message || 'Submission failed';
-                console.error('Server response:', data);
-                throw new Error(errorMessage);
-            }
-
-            updateProgress(100);
-
-            if (data.success) {
-                window.location.href = data.redirect_url;
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            document.getElementById('progress-container').classList.add('d-none');
-            
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-            let errorMessage = error.message;
-            
-            // Add more context to common errors
-            if (errorMessage.includes('Invalid or incomplete')) {
-                errorMessage += '. Please ensure all required fields are filled correctly.';
-            } else if (errorMessage.includes('validation')) {
-                errorMessage += '. Please check your responses and try again.';
-            }
-            
-            alertDiv.innerHTML = `
-                <strong>Error submitting questionnaire:</strong> ${errorMessage}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            this.insertBefore(alertDiv, this.firstChild);
-        }
-    });
-
-    // Add input validation on blur
-    document.querySelectorAll('input, textarea, select').forEach(input => {
-        input.addEventListener('blur', function() {
-            if (this.hasAttribute('required') && !this.value.trim()) {
-                this.classList.add('is-invalid');
-            } else {
-                this.classList.remove('is-invalid');
-            }
         });
     });
 </script>

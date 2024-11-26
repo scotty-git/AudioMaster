@@ -87,6 +87,8 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify({
                     title: formData.get('title'),
@@ -95,7 +97,13 @@
                 })
             });
 
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+            } catch (parseError) {
+                console.error('Error parsing response:', parseError);
+                throw new Error('Server returned an invalid response. Please try again later.');
+            }
             
             if (!response.ok) {
                 throw new Error(data.message || 'Failed to create template');

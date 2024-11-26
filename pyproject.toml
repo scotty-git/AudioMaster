@@ -15,4 +15,5 @@ dependencies = [
     "python-dotenv",
     "alembic",
     "flask-wtf>=1.2.2",
+    "sqlalchemy>=2.0.36",
 ]
