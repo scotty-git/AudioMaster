@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Book Outline{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ outline.chapters.title }}</h1>
+        <form method="POST" action="{{ url_for('audiobooks.generate_audiobook', outline_id=outline.id) }}"
+              style="display: inline;">
+            <button type="submit" class="btn btn-primary">
+                Generate Audiobook
+            </button>
+        </form>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Status</h5>
+            <p class="card-text">
+                <span class="badge bg-{{ 'success' if outline.status == 'approved' else 'secondary' }}">
+                    {{ outline.status|title }}
+                </span>
+            </p>
+        </div>
+    </div>
+    
+    <div class="chapters">
+        {% for chapter in outline.chapters.chapters %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title mb-0">Chapter {{ chapter.number }}: {{ chapter.title }}</h3>
+            </div>
+            <div class="card-body">
+                <p class="lead">{{ chapter.summary }}</p>
+                
+                <h5>Key Points:</h5>
+                <ul class="list-group list-group-flush">
+                    {% for point in chapter.key_points %}
+                    <li class="list-group-item">{{ point }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{{ url_for('questionnaires.view_response', response_id=outline.questionnaire_id) }}"
+           class="btn btn-outline-secondary">Back to Response</a>
+        
+        {% if outline.audiobook %}
+        <a href="{{ url_for('audiobooks.view_audiobook', audiobook_id=outline.audiobook.id) }}"
+           class="btn btn-primary">View Audiobook</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

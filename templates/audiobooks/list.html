@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Audiobooks{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Your Audiobooks</h1>
+    
+    <div class="row">
+        {% for audiobook in audiobooks %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ audiobook.outline.chapters.title }}</h5>
+                    
+                    <div class="mb-3">
+                        <span class="badge bg-{{ 'success' if audiobook.status == 'completed' else 'warning' }}">
+                            {{ audiobook.status|title }}
+                        </span>
+                    </div>
+                    
+                    {% if audiobook.status == 'completed' %}
+                    <div class="chapters-list">
+                        {% for chapter_num, file in audiobook.chapter_files.items()|sort %}
+                        <div class="audio-player mb-3">
+                            <h6>Chapter {{ chapter_num }}</h6>
+                            <audio controls class="w-100">
+                                <source src="{{ url_for('static', filename='audio/' + file) }}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <p class="text-muted">
+                        Total Duration: {{ audiobook.total_duration|default(0)|int // 60 }} minutes
+                    </p>
+                    {% else %}
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 75%"></div>
+                    </div>
+                    <p class="text-muted mt-2">Generating audiobook...</p>
+                    {% endif %}
+                </div>
+                
+                <div class="card-footer">
+                    <a href="{{ url_for('audiobooks.view_audiobook', audiobook_id=audiobook.id) }}"
+                       class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if not audiobooks %}
+    <div class="text-center py-5">
+        <p class="lead text-muted">No audiobooks generated yet.</p>
+        <a href="{{ url_for('templates.list_templates') }}" class="btn btn-primary">
+            Start with a Template
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

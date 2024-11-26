@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Templates{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Questionnaire Templates</h1>
+    <a href="{{ url_for('templates.create_template') }}" class="btn btn-primary">Create New Template</a>
+</div>
+
+<div class="row">
+    {% for template in templates %}
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ template.title }}</h5>
+                <p class="card-text">{{ template.description }}</p>
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('templates.view_template', template_id=template.id) }}" 
+                       class="btn btn-secondary">View</a>
+                    <a href="{{ url_for('questionnaires.respond', template_id=template.id) }}" 
+                       class="btn btn-primary">Respond</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

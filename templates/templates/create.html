@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Create Template{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Create New Template</h1>
+    
+    <form method="POST" action="{{ url_for('templates.create_template') }}" id="template-form">
+        <div class="mb-4">
+            <label for="title" class="form-label">Template Title</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+        </div>
+        
+        <div class="mb-4">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+        </div>
+        
+        <div id="sections-container">
+            <!-- Sections will be added here dynamically -->
+        </div>
+        
+        <button type="button" id="add-section" class="btn btn-secondary mb-4">
+            <i class="fas fa-plus"></i> Add Section
+        </button>
+        
+        <div class="d-flex justify-content-between">
+            <a href="{{ url_for('templates.list_templates') }}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Create Template</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('template-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Collect form data
+        const formData = new FormData(this);
+        const sections = [];
+        
+        // Process sections and questions
+        const sectionContainers = document.querySelectorAll('.section-container');
+        sectionContainers.forEach((section, sectionIndex) => {
+            const sectionData = {
+                title: formData.get(`sections[${sectionIndex}][title]`),
+                questions: []
+            };
+            
+            const questionContainers = section.querySelectorAll('.question-container');
+            questionContainers.forEach((question, questionIndex) => {
+                sectionData.questions.push({
+                    text: formData.get(`sections[${sectionIndex}][questions][${questionIndex}][text]`),
+                    type: formData.get(`sections[${sectionIndex}][questions][${questionIndex}][type]`)
+                });
+            });
+            
+            sections.push(sectionData);
+        });
+        
+        // Submit form with JSON data
+        fetch(this.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                title: formData.get('title'),
+                description: formData.get('description'),
+                sections: sections
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = "{{ url_for('templates.list_templates') }}";
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+{% endblock %}

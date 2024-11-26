@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Respond to Questionnaire{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">{{ template.title }}</h1>
+    <p class="lead mb-4">{{ template.description }}</p>
+    
+    <form method="POST" id="questionnaire-form">
+        {% for section in template.sections %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title mb-0">{{ section.title }}</h3>
+            </div>
+            <div class="card-body">
+                {% for question in section.questions %}
+                <div class="mb-4">
+                    <label class="form-label">{{ question.text }}</label>
+                    {% if question.type == 'text' %}
+                        <input type="text" class="form-control" 
+                               name="section_{{ loop.parent.loop.index0 }}_question_{{ loop.index0 }}" required>
+                    {% elif question.type == 'textarea' %}
+                        <textarea class="form-control" 
+                                name="section_{{ loop.parent.loop.index0 }}_question_{{ loop.index0 }}" 
+                                rows="3" required></textarea>
+                    {% elif question.type == 'number' %}
+                        <input type="number" class="form-control" 
+                               name="section_{{ loop.parent.loop.index0 }}_question_{{ loop.index0 }}" required>
+                    {% elif question.type == 'select' %}
+                        <select class="form-select" 
+                                name="section_{{ loop.parent.loop.index0 }}_question_{{ loop.index0 }}" required>
+                            {% for option in question.options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="d-flex justify-content-between">
+            <a href="{{ url_for('templates.view_template', template_id=template.id) }}" 
+               class="btn btn-outline-secondary">Back</a>
+            <button type="submit" class="btn btn-primary">Submit Responses</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('questionnaire-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Collect form data
+        const formData = new FormData(this);
+        const responses = {};
+        
+        // Process responses
+        for (const [name, value] of formData.entries()) {
+            const [section, question] = name.split('_').slice(1);
+            if (!responses[section]) {
+                responses[section] = {};
+            }
+            responses[section][question] = value;
+        }
+        
+        // Submit form with JSON data
+        fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(responses)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirect_url;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+{% endblock %}

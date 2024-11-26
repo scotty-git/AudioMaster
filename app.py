@@ -1,0 +1,58 @@
+import os
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from sqlalchemy.orm import DeclarativeBase
+from flask_login import LoginManager
+import logging
+from logging.handlers import RotatingFileHandler
+
+class Base(DeclarativeBase):
+    pass
+
+db = SQLAlchemy(model_class=Base)
+migrate = Migrate()
+login = LoginManager()
+
+def create_app():
+    app = Flask(__name__)
+    
+    # Configuration
+    app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', 'dev_key')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['OPENAI_API_KEY'] = os.environ.get('OPENAI_API_KEY')
+    
+    # Initialize extensions
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login.init_app(app)
+    login.login_view = 'auth.login'
+    
+    # Setup logging
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
+    file_handler = RotatingFileHandler('logs/audiov4.log', maxBytes=10240, backupCount=10)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+    ))
+    file_handler.setLevel(logging.INFO)
+    app.logger.addHandler(file_handler)
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('AudioV4 startup')
+    
+    # Register blueprints
+    from routes import templates, questionnaires, outlines, audiobooks
+    # Configure user loader
+    from models import User
+    
+    @login.user_loader
+    def load_user(id):
+        return User.query.get(str(id))
+
+    app.register_blueprint(templates.bp)
+    app.register_blueprint(questionnaires.bp)
+    app.register_blueprint(outlines.bp)
+    app.register_blueprint(audiobooks.bp)
+    
+    return app
