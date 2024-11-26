@@ -3,6 +3,18 @@ from models import Template, QuestionnaireResponse, db
 
 bp = Blueprint('questionnaires', __name__)
 
+@bp.route('/questionnaires/list')
+def list_responses():
+    try:
+        responses = QuestionnaireResponse.query.order_by(
+            QuestionnaireResponse.created_at.desc()
+        ).all()
+        return render_template('questionnaires/list.html', responses=responses)
+    except Exception as e:
+        current_app.logger.error(f"Error listing responses: {str(e)}")
+        flash('Error loading questionnaire responses. Please try again.', 'error')
+        return redirect(url_for('templates.list_templates'))
+
 @bp.route('/questionnaires/respond/<template_id>', methods=['GET', 'POST'])
 def respond(template_id):
     template = Template.query.get_or_404(template_id)
@@ -37,7 +49,7 @@ def respond(template_id):
             return jsonify({
                 'success': True,
                 'message': 'Response submitted successfully!',
-                'redirect_url': url_for('questionnaires.view_response', response_id=response.id)
+                'redirect_url': url_for('questionnaires.list_responses')
             })
 
         except Exception as e:

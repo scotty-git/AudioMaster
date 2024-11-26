@@ -76,3 +76,5 @@ Traceback (most recent call last):
 jinja2.exceptions.TemplateNotFound: questionnaires/view.html
 2024-11-26 14:37:21,469 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
 2024-11-26 14:37:29,768 ERROR: Error viewing response 5480d5cb-27c2-4a71-a613-289a8273d9d6: 'jinja2.runtime.LoopContext object' has no attribute 'parent' [in /home/runner/AudioMaster/routes/questionnaires.py:103]
+2024-11-26 14:37:56,514 ERROR: Error viewing response 86c59cf9-3ad9-41f9-9b39-83847c448577: 'jinja2.runtime.LoopContext object' has no attribute 'parent' [in /home/runner/AudioMaster/routes/questionnaires.py:103]
+2024-11-26 14:39:22,923 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
