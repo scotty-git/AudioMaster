@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Questionnaire Response{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ response.template.title }}</h1>
+        <form method="POST" action="{{ url_for('outlines.generate_outline', response_id=response.id) }}"
+              style="display: inline;">
+            <button type="submit" class="btn btn-primary">
+                Generate Book Outline
+            </button>
+        </form>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Description</h5>
+            <p class="card-text">{{ response.template.description }}</p>
+            <div class="mt-2">
+                <span class="badge bg-{{ 'success' if response.status == 'submitted' else 'secondary' }}">
+                    {{ response.status|title }}
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="sections">
+        {% for section in response.template.sections %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title mb-0">{{ section.title }}</h3>
+            </div>
+            <div class="card-body">
+                {% for question in section.questions %}
+                <div class="question mb-4">
+                    <h5>Question {{ loop.index }}</h5>
+                    <div class="d-flex flex-column">
+                        <p class="mb-2">{{ question.text }}</p>
+                        <div class="response p-3 bg-dark rounded">
+                            {{ response.responses[loop.parent.index0|string][loop.index0|string] }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="mt-4">
+        <a href="{{ url_for('templates.view_template', template_id=response.template.id) }}" 
+           class="btn btn-outline-secondary">Back to Template</a>
+    </div>
+</div>
+{% endblock %}

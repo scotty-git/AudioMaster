@@ -96,5 +96,10 @@ def validate_responses(responses, template_sections):
 
 @bp.route('/questionnaires/response/<response_id>')
 def view_response(response_id):
-    response = QuestionnaireResponse.query.get_or_404(response_id)
-    return render_template('questionnaires/view.html', response=response)
+    try:
+        response = QuestionnaireResponse.query.get_or_404(response_id)
+        return render_template('questionnaires/view.html', response=response)
+    except Exception as e:
+        current_app.logger.error(f"Error viewing response {response_id}: {str(e)}")
+        flash('Error loading questionnaire response. Please try again.', 'error')
+        return redirect(url_for('templates.list_templates'))
