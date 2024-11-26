@@ -5,11 +5,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy.orm import DeclarativeBase
 from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect
 import logging
 from logging.handlers import RotatingFileHandler
 
 class Base(DeclarativeBase):
     pass
+
+csrf = CSRFProtect()
 
 db = SQLAlchemy(model_class=Base)
 migrate = Migrate()
@@ -28,6 +31,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
+    csrf.init_app(app)
     login.login_view = 'auth.login'
     
     # Setup logging

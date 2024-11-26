@@ -84,3 +84,7 @@ jinja2.exceptions.TemplateNotFound: questionnaires/view.html
 2024-11-26 14:41:36,202 INFO: Generating outline with OpenAI [in /home/runner/AudioMaster/services/ai_service.py:38]
 2024-11-26 14:41:53,231 INFO: Successfully generated outline [in /home/runner/AudioMaster/services/ai_service.py:52]
 2024-11-26 14:42:21,370 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
+2024-11-26 14:43:06,744 INFO: Generating outline with OpenAI [in /home/runner/AudioMaster/services/ai_service.py:38]
+2024-11-26 14:43:27,270 ERROR: Invalid JSON in response: Expecting value: line 1 column 1 (char 0) [in /home/runner/AudioMaster/services/ai_service.py:62]
+2024-11-26 14:43:48,156 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:43]
+2024-11-26 14:45:13,116 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:47]
