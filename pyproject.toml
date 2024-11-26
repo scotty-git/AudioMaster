@@ -11,4 +11,7 @@ dependencies = [
     "flask-migrate>=4.0.7",
     "flask-login>=0.6.3",
     "openai>=1.55.1",
+    "tenacity>=9.0.0",
+    "python-dotenv",
+    "alembic",
 ]

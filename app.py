@@ -44,6 +44,7 @@ def create_app():
     
     # Register blueprints
     from routes import templates, questionnaires, outlines, audiobooks
+    
     # Configure user loader
     from models import User
     
