@@ -8,6 +8,15 @@
     <p class="lead mb-4">{{ template.description }}</p>
     
     <form method="POST" id="questionnaire-form">
+    <!-- Progress tracking -->
+    <div id="progress-container" class="mb-4 d-none">
+        <h5>Submission Progress</h5>
+        <div class="progress">
+            <div id="submission-progress" class="progress-bar progress-bar-striped progress-bar-animated"
+                 role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <small id="progress-text" class="text-muted">0% Complete</small>
+    </div>
         {% for section in template.sections %}
         <div class="card mb-4">
             <div class="card-header">
@@ -50,9 +59,50 @@
 </div>
 
 <script>
-    document.getElementById('questionnaire-form').addEventListener('submit', function(e) {
+    function validateForm() {
+        const form = document.getElementById('questionnaire-form');
+        const inputs = form.querySelectorAll('input, textarea, select');
+        let isValid = true;
+        
+        inputs.forEach(input => {
+            if (input.hasAttribute('required') && !input.value.trim()) {
+                input.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+        
+        return isValid;
+    }
+
+    function updateProgress(progress) {
+        const progressBar = document.getElementById('submission-progress');
+        const progressText = document.getElementById('progress-text');
+        
+        progressBar.style.width = `${progress}%`;
+        progressBar.setAttribute('aria-valuenow', progress);
+        progressText.textContent = `${progress}% Complete`;
+    }
+
+    document.getElementById('questionnaire-form').addEventListener('submit', async function(e) {
         e.preventDefault();
         
+        if (!validateForm()) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                Please fill in all required fields
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            this.insertBefore(alertDiv, this.firstChild);
+            return;
+        }
+
+        // Show progress container
+        document.getElementById('progress-container').classList.remove('d-none');
+        updateProgress(10);
+
         // Collect form data
         const formData = new FormData(this);
         const responses = {};
@@ -66,22 +116,53 @@
             responses[section][question] = value;
         }
         
-        // Submit form with JSON data
-        fetch(window.location.href, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(responses)
-        })
-        .then(response => response.json())
-        .then(data => {
+        updateProgress(30);
+
+        try {
+            // Submit form with JSON data
+            const response = await fetch(window.location.href, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(responses)
+            });
+
+            updateProgress(60);
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Submission failed');
+            }
+
+            updateProgress(100);
+
             if (data.success) {
                 window.location.href = data.redirect_url;
             }
-        })
-        .catch(error => {
+        } catch (error) {
             console.error('Error:', error);
+            document.getElementById('progress-container').classList.add('d-none');
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                Error submitting questionnaire: ${error.message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            this.insertBefore(alertDiv, this.firstChild);
+        }
+    });
+
+    // Add input validation on blur
+    document.querySelectorAll('input, textarea, select').forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.hasAttribute('required') && !this.value.trim()) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
         });
     });
 </script>
