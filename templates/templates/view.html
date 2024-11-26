@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}{{ template.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ template.title }}</h1>
+        <a href="{{ url_for('questionnaires.respond', template_id=template.id) }}" 
+           class="btn btn-primary">Respond to Template</a>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Description</h5>
+            <p class="card-text">{{ template.description }}</p>
+        </div>
+    </div>
+    
+    <div class="sections">
+        {% for section in template.sections %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title mb-0">{{ section.title }}</h3>
+            </div>
+            <div class="card-body">
+                <div class="questions-list">
+                    {% for question in section.questions %}
+                    <div class="question mb-4">
+                        <h5>Question {{ loop.index }}</h5>
+                        <p class="mb-2">{{ question.text }}</p>
+                        <small class="text-muted">Type: {{ question.type|title }}</small>
+                        
+                        {% if question.type == 'select' and question.options %}
+                        <div class="mt-2">
+                            <strong>Options:</strong>
+                            <ul class="list-unstyled ms-3">
+                                {% for option in question.options %}
+                                <li>{{ option }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="mt-4">
+        <a href="{{ url_for('templates.list_templates') }}" 
+           class="btn btn-outline-secondary">Back to Templates</a>
+    </div>
+</div>
+{% endblock %}
