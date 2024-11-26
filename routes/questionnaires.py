@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, current_app
-from models import QuestionnaireResponse, db
+from models import QuestionnaireResponse, Template, db
 from flask_wtf.csrf import validate_csrf, ValidationError
+import traceback
 
 bp = Blueprint('questionnaires', __name__)
 
@@ -52,28 +53,61 @@ def view_response(response_id):
 
 @bp.route('/questionnaires/response/<response_id>/delete', methods=['POST'])
 def delete_response(response_id):
+    if not request.is_json:
+        current_app.logger.error(f"Non-JSON request received for response deletion {response_id}")
+        return jsonify({
+            'success': False,
+            'message': 'Invalid request format. Expected JSON.'
+        }), 400
+
     try:
         # Validate CSRF token
+        csrf_token = request.headers.get('X-CSRFToken')
+        if not csrf_token:
+            current_app.logger.error(f"Missing CSRF token for response deletion {response_id}")
+            return jsonify({
+                'success': False,
+                'message': 'Missing CSRF token'
+            }), 400
+
         try:
-            validate_csrf(request.headers.get('X-CSRFToken'))
-        except ValidationError:
+            validate_csrf(csrf_token)
+        except ValidationError as ve:
+            current_app.logger.error(f"Invalid CSRF token for response deletion {response_id}: {str(ve)}")
             return jsonify({
                 'success': False,
                 'message': 'Invalid CSRF token'
             }), 400
 
-        response = QuestionnaireResponse.query.get_or_404(response_id)
+        response = QuestionnaireResponse.query.get(response_id)
+        if not response:
+            current_app.logger.error(f"Response not found for deletion: {response_id}")
+            return jsonify({
+                'success': False,
+                'message': 'Response not found'
+            }), 404
+
+        if response.status == 'deleted':
+            current_app.logger.warning(f"Attempt to delete already deleted response: {response_id}")
+            return jsonify({
+                'success': False,
+                'message': 'Response already deleted'
+            }), 400
+
         response.status = 'deleted'  # Soft delete
         db.session.commit()
         
+        current_app.logger.info(f"Successfully deleted response {response_id}")
         return jsonify({
             'success': True,
             'message': 'Response deleted successfully!'
         })
+
     except Exception as e:
-        current_app.logger.error(f"Error deleting response {response_id}: {str(e)}")
+        error_details = traceback.format_exc()
+        current_app.logger.error(f"Error deleting response {response_id}:\n{error_details}")
         db.session.rollback()
         return jsonify({
             'success': False,
-            'message': 'Error deleting response. Please try again.'
+            'message': 'An error occurred while deleting the response. Please try again.'
         }), 500

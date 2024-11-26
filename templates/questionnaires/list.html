@@ -121,11 +121,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'application/json',
                         'X-CSRFToken': this.querySelector('input[name="csrf_token"]').value
-                    }
+                    },
+                    body: JSON.stringify({}) // Send empty JSON object to ensure JSON request
                 });
                 
-                const data = await response.json();
+                let data;
+                try {
+                    data = await response.json();
+                } catch (parseError) {
+                    console.error('Error parsing response:', parseError);
+                    throw new Error('Server returned an invalid response. Please try again later.');
+                }
                 
                 if (response.ok) {
                     // Remove the response row from the UI
@@ -151,7 +159,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error(data.message || 'Failed to delete response');
                 }
             } catch (error) {
-                errorDiv.textContent = error.message;
+                console.error('Delete operation failed:', error);
+                let errorMessage = 'Failed to delete response. ';
+                
+                if (error.message.includes('CSRF')) {
+                    errorMessage += 'Security validation failed. Please refresh the page and try again.';
+                } else if (error.message.includes('already deleted')) {
+                    errorMessage += 'This response has already been deleted.';
+                } else if (error.message.includes('not found')) {
+                    errorMessage += 'The response could not be found.';
+                } else if (error.message.includes('invalid response')) {
+                    errorMessage += 'Server communication error. Please try again later.';
+                } else {
+                    errorMessage += 'An unexpected error occurred. Please try again.';
+                }
+                
+                errorDiv.textContent = errorMessage;
                 errorDiv.classList.remove('d-none');
             } finally {
                 submitBtn.disabled = false;
