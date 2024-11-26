@@ -28,18 +28,36 @@
     <div class="chapters">
         {% for chapter in outline.chapters.chapters %}
         <div class="card mb-4">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h3 class="card-title mb-0">Chapter {{ chapter.number }}: {{ chapter.title }}</h3>
+                <span class="badge bg-{{ 'success' if outline.audiobook and outline.audiobook.status == 'completed' else 'secondary' }}">
+                    {{ outline.audiobook.status|default('Pending')|title if outline.audiobook else 'Ready for Audio' }}
+                </span>
             </div>
             <div class="card-body">
                 <p class="lead">{{ chapter.summary }}</p>
                 
                 <h5>Key Points:</h5>
-                <ul class="list-group list-group-flush">
+                <ul class="list-group list-group-flush mb-3">
                     {% for point in chapter.key_points %}
                     <li class="list-group-item">{{ point }}</li>
                     {% endfor %}
                 </ul>
+
+                {% if outline.audiobook and outline.audiobook.status == 'completed' %}
+                <div class="audio-player">
+                    <h6>Chapter Audio</h6>
+                    <audio controls class="w-100">
+                        <source src="{{ url_for('static', filename='audio/' + outline.audiobook.chapter_files[chapter.number|string]) }}" 
+                                type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+                {% endif %}
+
+                <p class="text-muted mt-2">
+                    <small>Estimated Duration: {{ chapter.estimated_duration }}</small>
+                </p>
             </div>
         </div>
         {% endfor %}
