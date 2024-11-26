@@ -109,20 +109,22 @@
         const responses = {};
         
         // Process responses
-        const responses = {};
+        console.log('Processing form data...');
         for (const [name, value] of formData.entries()) {
+            console.log('Processing field:', name, 'with value:', value);
             const matches = name.match(/section_(\d+)_question_(\d+)/);
             if (matches) {
                 const [_, sectionIdx, questionIdx] = matches;
                 if (!responses[sectionIdx]) {
                     responses[sectionIdx] = {};
                 }
-                responses[sectionIdx][questionIdx] = value;
+                responses[sectionIdx][questionIdx] = value.trim();
+                console.log(`Added response for section ${sectionIdx}, question ${questionIdx}`);
             }
         }
         
-        // Debug log
-        console.log('Submitting responses:', responses);
+        // Debug log final structure
+        console.log('Final response structure:', JSON.stringify(responses, null, 2));
         
         updateProgress(30);
 
@@ -141,7 +143,9 @@
             const data = await response.json();
             
             if (!response.ok) {
-                throw new Error(data.message || 'Submission failed');
+                const errorMessage = data.message || 'Submission failed';
+                console.error('Server response:', data);
+                throw new Error(errorMessage);
             }
 
             updateProgress(100);
@@ -155,8 +159,17 @@
             
             const alertDiv = document.createElement('div');
             alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            let errorMessage = error.message;
+            
+            // Add more context to common errors
+            if (errorMessage.includes('Invalid or incomplete')) {
+                errorMessage += '. Please ensure all required fields are filled correctly.';
+            } else if (errorMessage.includes('validation')) {
+                errorMessage += '. Please check your responses and try again.';
+            }
+            
             alertDiv.innerHTML = `
-                Error submitting questionnaire: ${error.message}
+                <strong>Error submitting questionnaire:</strong> ${errorMessage}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             `;
             this.insertBefore(alertDiv, this.firstChild);
