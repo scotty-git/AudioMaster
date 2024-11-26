@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, current_app
 from models import Template, db
 from datetime import datetime
 
@@ -13,18 +13,42 @@ def list_templates():
 def create_template():
     if request.method == 'POST':
         try:
-            template = Template(
-                title=request.form['title'],
-                description=request.form['description'],
-                sections=request.json['sections']
-            )
-            db.session.add(template)
-            db.session.commit()
-            flash('Template created successfully!', 'success')
-            return redirect(url_for('templates.list_templates'))
+            if request.is_json:
+                data = request.get_json()
+                template = Template(
+                    title=data['title'],
+                    description=data['description'],
+                    sections=data['sections']
+                )
+                db.session.add(template)
+                db.session.commit()
+                return jsonify({
+                    'success': True,
+                    'message': 'Template created successfully!',
+                    'redirect_url': url_for('templates.list_templates')
+                })
+            else:
+                # Handle traditional form submission for non-JS fallback
+                template = Template(
+                    title=request.form['title'],
+                    description=request.form['description'],
+                    sections=[]  # Initialize with empty sections for form-based submission
+                )
+                db.session.add(template)
+                db.session.commit()
+                flash('Template created successfully!', 'success')
+                return redirect(url_for('templates.list_templates'))
+
         except Exception as e:
             db.session.rollback()
+            current_app.logger.error(f'Error creating template: {str(e)}')
+            if request.is_json:
+                return jsonify({
+                    'success': False,
+                    'message': 'Error creating template'
+                }), 500
             flash(f'Error creating template: {str(e)}', 'error')
+            return redirect(url_for('templates.create_template'))
     
     return render_template('templates/create.html')
 

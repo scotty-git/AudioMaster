@@ -33,8 +33,30 @@
 </div>
 
 <script>
-    document.getElementById('template-form').addEventListener('submit', function(e) {
+    document.getElementById('template-form').addEventListener('submit', async function(e) {
         e.preventDefault();
+        
+        // Clear any existing alerts
+        const existingAlerts = this.querySelectorAll('.alert');
+        existingAlerts.forEach(alert => alert.remove());
+        
+        // Validate form
+        if (!this.checkValidity()) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                Please fill in all required fields
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            this.insertBefore(alertDiv, this.firstChild);
+            return;
+        }
+
+        // Show loading state
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...';
         
         // Collect form data
         const formData = new FormData(this);
@@ -59,27 +81,52 @@
             sections.push(sectionData);
         });
         
-        // Submit form with JSON data
-        fetch(this.action, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                title: formData.get('title'),
-                description: formData.get('description'),
-                sections: sections
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.href = "{{ url_for('templates.list_templates') }}";
+        try {
+            // Submit form with JSON data
+            const response = await fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    sections: sections
+                })
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to create template');
             }
-        })
-        .catch(error => {
+
+            if (data.success) {
+                // Show success message briefly before redirect
+                const successAlert = document.createElement('div');
+                successAlert.className = 'alert alert-success';
+                successAlert.textContent = data.message;
+                this.insertBefore(successAlert, this.firstChild);
+                
+                // Redirect after a brief delay
+                setTimeout(() => {
+                    window.location.href = data.redirect_url;
+                }, 1000);
+            }
+        } catch (error) {
             console.error('Error:', error);
-        });
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                ${error.message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            this.insertBefore(alertDiv, this.firstChild);
+            
+            // Reset submit button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        }
     });
 </script>
 {% endblock %}
