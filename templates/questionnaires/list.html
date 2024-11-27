@@ -112,8 +112,13 @@ document.querySelectorAll('[id^="generateOutlineForm-"]').forEach(form => {
                 }
             });
             
+            // Always try to parse JSON response
             const data = await response.json();
             
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to generate outline');
+            }
+
             if (data.success) {
                 window.location.href = data.redirect_url;
             } else {
@@ -121,18 +126,21 @@ document.querySelectorAll('[id^="generateOutlineForm-"]').forEach(form => {
             }
         } catch (error) {
             console.error('Error:', error);
-            btn.disabled = false;
-            spinner.classList.add('d-none');
-            buttonText.textContent = 'Generate Outline';
             
             // Show error alert
             const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
             alertDiv.innerHTML = `
-                <strong>Error:</strong> ${error.message}
+                <strong>Error generating outline:</strong> ${error.message}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             `;
-            document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.table-responsive'));
+            const container = document.querySelector('.container');
+            container.insertBefore(alertDiv, container.firstChild);
+            
+            // Reset button state
+            btn.disabled = false;
+            spinner.classList.add('d-none');
+            buttonText.textContent = 'Generate Outline';
         }
     });
 });

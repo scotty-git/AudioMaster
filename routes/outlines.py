@@ -12,37 +12,49 @@ def list_outlines():
 
 @bp.route('/outlines/generate/<response_id>', methods=['POST'])
 def generate_outline(response_id):
+    """Generate a book outline from a questionnaire response."""
+    # Always return JSON responses for consistency
+    if not request.is_json:
+        return jsonify({
+            'success': False,
+            'message': 'Invalid request format. Expected JSON.'
+        }), 400
+
     # Validate CSRF token
     try:
-        csrf_token = request.headers.get('X-CSRFToken') if request.is_json else request.form.get('csrf_token')
+        csrf_token = request.headers.get('X-CSRFToken')
         if not csrf_token:
             current_app.logger.error("Missing CSRF token for outline generation")
-            if request.is_json:
-                return jsonify({
-                    'success': False,
-                    'message': 'Missing CSRF token. Please refresh the page and try again.'
-                }), 400
-            flash('Missing CSRF token', 'error')
-            return redirect(url_for('questionnaires.view_response', response_id=response_id))
+            return jsonify({
+                'success': False,
+                'message': 'Missing security token. Please refresh the page and try again.'
+            }), 400
             
         validate_csrf(csrf_token)
     except ValidationError:
         current_app.logger.error("CSRF validation failed for outline generation")
-        if request.is_json:
-            return jsonify({
-                'success': False,
-                'message': 'Invalid CSRF token. Please refresh the page and try again.'
-            }), 400
-        flash('Invalid CSRF token', 'error')
-        return redirect(url_for('questionnaires.view_response', response_id=response_id))
+        return jsonify({
+            'success': False,
+            'message': 'Invalid security token. Please refresh the page and try again.'
+        }), 400
 
     try:
+        # Get and validate questionnaire response
         response = QuestionnaireResponse.query.get_or_404(response_id)
-        
+        if not response:
+            return jsonify({
+                'success': False,
+                'message': 'Questionnaire response not found.'
+            }), 404
+            
         # Check if response is in valid state
         if response.status != 'submitted':
-            raise ValueError(f"Invalid response status: {response.status}. Response must be in 'submitted' state.")
+            return jsonify({
+                'success': False,
+                'message': f'Invalid response status: {response.status}. Response must be submitted first.'
+            }), 400
             
+        # Initialize AI service and start generation
         ai_service = AIService()
         current_app.logger.info(f"Starting outline generation for response {response_id}")
         
@@ -51,9 +63,11 @@ def generate_outline(response_id):
         db.session.commit()
         
         try:
+            # Generate outline using AI service
             outline_data = ai_service.generate_outline(response.responses)
             current_app.logger.info(f"AI outline generation completed for response {response_id}")
             
+            # Create and save outline
             outline = BookOutline(
                 questionnaire_id=response_id,
                 chapters=outline_data,
@@ -63,13 +77,11 @@ def generate_outline(response_id):
             db.session.commit()
             current_app.logger.info(f"Outline saved to database with id {outline.id}")
             
-            success_response = {
+            return jsonify({
                 'success': True,
                 'message': 'Outline generated successfully!',
                 'redirect_url': url_for('outlines.view_outline', outline_id=outline.id)
-            }
-            
-            return jsonify(success_response) if request.is_json else redirect(success_response['redirect_url'])
+            })
             
         except ValueError as e:
             error_msg = str(e)
@@ -90,50 +102,29 @@ def generate_outline(response_id):
     except ValueError as e:
         db.session.rollback()
         current_app.logger.error(f"Validation error during outline generation: {str(e)}")
-        error_response = {
+        return jsonify({
             'success': False,
             'message': str(e),
             'error_type': 'validation_error'
-        }
-        return jsonify(error_response) if request.is_json else render_template('error.html', error=str(e)), 400
+        }), 400
         
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Error generating outline: {str(e)}")
-        error_response = {
+        return jsonify({
             'success': False,
             'message': str(e),
             'error_type': 'system_error'
-        }
-        return jsonify(error_response) if request.is_json else render_template('error.html', error=str(e)), 500
+        }), 500
         
     finally:
         if 'response' in locals():
             response.status = 'submitted'  # Reset status if error occurred
-            db.session.commit()
-    
-    # Handle regular POST request
-    try:
-        current_app.logger.info(f"Starting outline generation for response {response_id}")
-        outline_data = ai_service.generate_outline(response.responses)
-        
-        outline = BookOutline(
-            questionnaire_id=response_id,
-            chapters=outline_data,
-            status='draft'
-        )
-        db.session.add(outline)
-        db.session.commit()
-        current_app.logger.info(f"Outline saved to database with id {outline.id}")
-        
-        flash('Outline generated successfully!', 'success')
-        return redirect(url_for('outlines.view_outline', outline_id=outline.id))
-        
-    except Exception as e:
-        db.session.rollback()
-        current_app.logger.error(f"Error generating outline: {str(e)}")
-        flash('Error generating outline. Please try again.', 'error')
-        return redirect(url_for('questionnaires.view_response', response_id=response_id))
+            try:
+                db.session.commit()
+            except Exception as e:
+                current_app.logger.error(f"Error resetting response status: {str(e)}")
+                db.session.rollback()
 
 @bp.route('/outlines/generate/new', methods=['GET'])
 def new_outline():
