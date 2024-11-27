@@ -10,8 +10,9 @@ class AIService:
         self.client = openai.OpenAI(
             api_key=current_app.config['OPENAI_API_KEY']
         )
-        self.max_retries = 3
+        self.max_retries = 2  # Reduced to 2 retries
         self.base_wait = 1
+        self.request_timeout = 60  # 60 seconds timeout
         self._verify_api_key()
 
     def _verify_api_key(self):
@@ -36,30 +37,37 @@ class AIService:
             current_app.logger.error(f"OpenAI API key verification failed: {str(e)}")
             raise ValueError("Failed to verify OpenAI API key. Please check your configuration.")
     
-    @retry(stop=stop_after_attempt(3), 
+    @retry(stop=stop_after_attempt(2), 
            wait=wait_exponential(multiplier=1, min=4, max=10),
            retry=lambda e: isinstance(e, (RateLimitError, APIError)))
     def generate_outline(self, questionnaire_responses):
-        max_retries = 3
+        max_retries = 2
         retry_count = 0
         
         while retry_count < max_retries:
+            start_time = time.time()
             try:
                 prompt = self._create_outline_prompt(questionnaire_responses)
                 current_app.logger.info(f"Generating outline with OpenAI (attempt {retry_count + 1}/{max_retries})")
                 
+                # Check for timeout
+                if time.time() - start_time > self.request_timeout:
+                    raise TimeoutError("Request timeout: Generation taking too long")
+
                 response = self.client.chat.completions.create(
-                    model="gpt-4-1106-preview",  # Use the latest model with better JSON support
+                    model="gpt-4-1106-preview",
                     messages=[
                         {"role": "system", "content": """You are an expert book outline creator specializing in creating well-structured, engaging book outlines. 
-                         You must respond with valid JSON only. No additional text or explanations.
-                         Focus on maintaining narrative flow and ensuring each chapter builds upon previous ones."""},
+                         CRITICAL: You must respond with ONLY valid JSON. No additional text, comments, or explanations.
+                         Focus on maintaining narrative flow and ensuring each chapter builds upon previous ones.
+                         Your response will be parsed as JSON, any deviation from JSON format will cause an error."""},
                         {"role": "user", "content": prompt}
                     ],
                     temperature=0.7,
                     presence_penalty=0.3,
                     frequency_penalty=0.3,
-                    response_format={"type": "json_object"}  # Enforce JSON response format
+                    response_format={"type": "json_object"},  # Enforce JSON response format
+                    timeout=self.request_timeout
                 )
                 
                 content = response.choices[0].message.content
@@ -67,24 +75,35 @@ class AIService:
                 current_app.logger.info("Successfully generated and validated outline")
                 return outline
                 
-            except (json.JSONDecodeError, ValueError) as e:
+            except json.JSONDecodeError as e:
                 retry_count += 1
-                current_app.logger.warning(f"Invalid response format (attempt {retry_count}/{max_retries}): {str(e)}")
+                current_app.logger.warning(f"Invalid JSON format (attempt {retry_count}/{max_retries}): {str(e)}")
                 if retry_count >= max_retries:
-                    raise ValueError(f"Failed to generate valid outline after {max_retries} attempts: {str(e)}")
+                    raise ValueError("AI response validation failed: Invalid JSON format. Please try again.")
+                continue
+                
+            except ValueError as e:
+                retry_count += 1
+                current_app.logger.warning(f"Validation error (attempt {retry_count}/{max_retries}): {str(e)}")
+                if retry_count >= max_retries:
+                    raise ValueError(f"AI response validation failed: {str(e)}")
                 continue
                 
             except RateLimitError as e:
                 current_app.logger.warning(f"Rate limit hit: {str(e)}")
-                raise
+                raise ValueError("AI service is currently busy. Please wait a moment and try again.")
                 
             except APIError as e:
                 current_app.logger.error(f"OpenAI API Error: {str(e)}")
-                raise
+                raise ValueError("AI service encountered an error. Please try again.")
+                
+            except TimeoutError as e:
+                current_app.logger.error(f"Timeout Error: {str(e)}")
+                raise ValueError("Request timed out. The outline generation is taking longer than expected. Please try again.")
                 
             except Exception as e:
                 current_app.logger.error(f"AI Outline Generation Error: {str(e)}")
-                raise
+                raise ValueError("An unexpected error occurred. Please try again.")
     
     @retry(stop=stop_after_attempt(3), 
            wait=wait_exponential(multiplier=1, min=4, max=10),
