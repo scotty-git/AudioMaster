@@ -144,39 +144,45 @@ class AIService:
             raise ValueError(f"Invalid JSON format: {str(e)}")
             
     def _create_outline_prompt(self, responses):
-        return f"""You must respond with a valid JSON object. Format your response as a raw JSON object without any additional text or formatting.
-
-Based on the following questionnaire responses, create a detailed book outline that is optimized for audio format and engaging listening experience:
+        return f"""You are a professional book outline creator. Generate a detailed book outline optimized for audio format based on these questionnaire responses:
 
 {json.dumps(responses, indent=2)}
 
-Please create a well-structured outline that:
-1. Maintains a clear narrative flow between chapters
-2. Ensures each chapter builds upon previous content
-3. Includes transition points between major topics
-4. Considers the audio listening experience
+IMPORTANT: Respond ONLY with a valid JSON object. Do not include any explanatory text.
 
-Your response must be a JSON object with exactly this structure:
+The JSON response MUST follow this exact structure:
 {{
     "title": "Book Title",
     "chapters": [
         {{
             "number": 1,
             "title": "Chapter Title",
-            "summary": "Detailed chapter summary including main themes and flow",
-            "key_points": ["Specific key point 1", "Specific key point 2"],
+            "summary": "Brief yet detailed chapter summary (2-3 sentences)",
+            "key_points": [
+                "Key point 1 - specific and actionable",
+                "Key point 2 - clear and concise",
+                "Key point 3 - memorable takeaway"
+            ],
             "estimated_duration": "15-20 minutes"
         }}
     ]
 }}
 
-Important:
-- Respond only with the JSON object, no additional text
-- All fields shown above are required
-- chapters must be an array of chapter objects
-- key_points must be an array of strings
-- Ensure proper JSON formatting with double quotes
+Guidelines:
+1. Create 5-7 well-structured chapters
+2. Each chapter must be self-contained but connected
+3. Ensure smooth transitions between topics
+4. Keep audio format in mind - clear structure, memorable points
+5. Each chapter should be 15-20 minutes when narrated
+
+REQUIREMENTS:
+- ALL fields shown in the structure are required
+- 'number' must be an integer starting from 1
+- 'key_points' must be an array with 3-5 points
+- 'estimated_duration' should be in the format "X-Y minutes"
+- Use proper JSON formatting with double quotes
 - Numbers should not be quoted
+- No comments or additional text allowed
 
 Ensure each chapter is substantial enough for audio content but not too long for comfortable listening."""
     
