@@ -8,12 +8,12 @@
     
     {% if responses %}
     <div class="table-responsive">
-        <table class="table">
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Template</th>
                     <th>Status</th>
-                    <th>Created</th>
+                    <th>Created At</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -32,23 +32,23 @@
                             <a href="{{ url_for('questionnaires.view_response', response_id=response.id) }}"
                                class="btn btn-secondary btn-sm">View Response</a>
                             {% if response.status != 'deleted' %}
-                            <form id="generateOutlineForm-{{ response.id }}" method="POST" 
+                            <form class="generate-outline-form" method="POST" 
                                   action="{{ url_for('outlines.generate_outline', response_id=response.id) }}"
                                   style="display: inline;">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <button type="submit" class="btn btn-primary btn-sm" id="generateOutlineBtn-{{ response.id }}">
+                                <button type="submit" class="btn btn-primary btn-sm generate-outline-btn">
                                     <span class="spinner-border spinner-border-sm d-none" role="status"></span>
                                     <span class="button-text">Generate Outline</span>
                                 </button>
                             </form>
-                            <button type="button" class="btn btn-danger btn-sm"
+                            {% endif %}
+                            <button type="button" class="btn btn-danger btn-sm delete-response-btn"
                                     data-bs-toggle="modal"
                                     data-bs-target="#deleteResponseModal"
                                     data-response-id="{{ response.id }}"
                                     data-template-title="{{ response.template.title }}">
                                 Delete
                             </button>
-                            {% endif %}
                         </div>
                     </td>
                 </tr>
@@ -67,183 +67,168 @@
 </div>
 
 <!-- Delete Response Modal -->
-<div class="modal fade" id="deleteResponseModal" tabindex="-1" aria-labelledby="deleteResponseModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteResponseModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteResponseModalLabel">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Delete Response</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="alert alert-danger d-none" id="deleteError"></div>
-                Are you sure you want to delete this response for "<span id="responseTemplateTitle"></span>"?
+                <p>Are you sure you want to delete the response for template: <strong><span id="responseTemplateTitle"></span></strong>?</p>
+                <div id="deleteError" class="alert alert-danger d-none"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" id="confirmDeleteBtn" class="btn btn-danger">
-                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
                     Delete
                 </button>
             </div>
         </div>
     </div>
-<script>
-document.querySelectorAll('[id^="generateOutlineForm-"]').forEach(form => {
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const responseId = this.id.split('-')[1];
-        const btn = document.getElementById(`generateOutlineBtn-${responseId}`);
-        const spinner = btn.querySelector('.spinner-border');
-        const buttonText = btn.querySelector('.button-text');
-        
-        // Show loading state
-        btn.disabled = true;
-        spinner.classList.remove('d-none');
-        buttonText.textContent = 'Generating...';
-        
-        try {
-            const response = await fetch(this.action, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
-                }
-            });
-            
-            // Always try to parse JSON response
-            const data = await response.json();
-            
-            if (!response.ok) {
-                throw new Error(data.message || 'Failed to generate outline');
-            }
-
-            if (data.success) {
-                window.location.href = data.redirect_url;
-            } else {
-                throw new Error(data.message || 'Failed to generate outline');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            
-            // Show error alert
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
-            alertDiv.innerHTML = `
-                <strong>Error generating outline:</strong> ${error.message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            const container = document.querySelector('.container');
-            container.insertBefore(alertDiv, container.firstChild);
-            
-            // Reset button state
-            btn.disabled = false;
-            spinner.classList.add('d-none');
-            buttonText.textContent = 'Generate Outline';
-        }
-    });
-});
-</script>
 </div>
 
 <script>
+// Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing event handlers...');
+
+    // Handle outline generation
+    document.querySelectorAll('.generate-outline-form').forEach(form => {
+        console.log('Setting up outline generation form:', form);
+        
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('Form submission started');
+
+            // Get form elements
+            const submitButton = this.querySelector('.generate-outline-btn');
+            const spinner = submitButton.querySelector('.spinner-border');
+            const buttonText = submitButton.querySelector('.button-text');
+            const csrfToken = this.querySelector('input[name="csrf_token"]').value;
+
+            console.log('Form elements retrieved:', {
+                buttonFound: !!submitButton,
+                spinnerFound: !!spinner,
+                buttonTextFound: !!buttonText,
+                csrfTokenPresent: !!csrfToken
+            });
+
+            // Show loading state
+            submitButton.disabled = true;
+            spinner.classList.remove('d-none');
+            buttonText.textContent = 'Generating...';
+
+            try {
+                console.log('Sending fetch request to:', this.action);
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({})
+                });
+
+                console.log('Response received:', {
+                    status: response.status,
+                    ok: response.ok
+                });
+
+                const data = await response.json();
+                console.log('Response data:', data);
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to generate outline');
+                }
+
+                if (data.success) {
+                    window.location.href = data.redirect_url;
+                } else {
+                    throw new Error(data.message || 'Failed to generate outline');
+                }
+            } catch (error) {
+                console.error('Error during outline generation:', error);
+                
+                // Show error alert
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
+                alertDiv.innerHTML = `
+                    <strong>Error generating outline:</strong> ${error.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                const container = document.querySelector('.container');
+                container.insertBefore(alertDiv, container.firstChild);
+
+                // Reset button state
+                submitButton.disabled = false;
+                spinner.classList.add('d-none');
+                buttonText.textContent = 'Generate Outline';
+            }
+        });
+    });
+
+    // Handle delete modal
     const deleteModal = document.getElementById('deleteResponseModal');
     if (deleteModal) {
+        console.log('Setting up delete modal');
         let currentResponseId = null;
 
         deleteModal.addEventListener('show.bs.modal', function(event) {
             const button = event.relatedTarget;
-            currentResponseId = button.getAttribute('data-response-id');
-            const templateTitle = button.getAttribute('data-template-title');
+            currentResponseId = button.dataset.responseId;
+            const templateTitle = button.dataset.templateTitle;
             
+            console.log('Delete modal shown for:', {
+                responseId: currentResponseId,
+                templateTitle: templateTitle
+            });
+
             deleteModal.querySelector('#responseTemplateTitle').textContent = templateTitle;
             deleteModal.querySelector('#deleteError').classList.add('d-none');
         });
 
         const confirmDeleteBtn = deleteModal.querySelector('#confirmDeleteBtn');
-        confirmDeleteBtn.addEventListener('click', async function() {
-            const spinner = this.querySelector('.spinner-border');
-            const errorDiv = deleteModal.querySelector('#deleteError');
-            
-            // Show loading state
-            this.disabled = true;
-            spinner.classList.remove('d-none');
-            errorDiv.classList.add('d-none');
-            
-            try {
-                const response = await fetch(`/questionnaires/response/${currentResponseId}/delete`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({})
-                });
-
-                let data;
+        if (confirmDeleteBtn) {
+            confirmDeleteBtn.addEventListener('click', async function() {
+                const spinner = this.querySelector('.spinner-border');
+                const errorDiv = deleteModal.querySelector('#deleteError');
+                
+                // Show loading state
+                this.disabled = true;
+                spinner.classList.remove('d-none');
+                errorDiv.classList.add('d-none');
+                
                 try {
-                    data = await response.json();
-                } catch (parseError) {
-                    console.error('Error parsing response:', parseError);
-                    throw new Error('Server returned an invalid response. Please try again later.');
-                }
-                
-                if (response.ok) {
-                    // Remove the response row from the UI
-                    const responseRow = document.querySelector(`.response-row[data-response-id="${currentResponseId}"]`);
-                    if (responseRow) {
-                        responseRow.remove();
-                    }
-                    
-                    // Close modal
-                    const modalInstance = bootstrap.Modal.getInstance(deleteModal);
-                    modalInstance.hide();
-                    
-                    // Add success alert
-                    const alertDiv = document.createElement('div');
-                    alertDiv.className = 'alert alert-success alert-dismissible fade show';
-                    alertDiv.innerHTML = `
-                        ${data.message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    `;
-                    document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.table-responsive'));
+                    console.log('Sending delete request for response:', currentResponseId);
+                    const response = await fetch(`/questionnaires/response/${currentResponseId}/delete`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token() }}'
+                        }
+                    });
 
-                    // Reload the page if no responses left
-                    const remainingRows = document.querySelectorAll('.response-row');
-                    if (remainingRows.length === 0) {
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1000);
+                    const data = await response.json();
+                    console.log('Delete response:', data);
+
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        throw new Error(data.message || 'Failed to delete response');
                     }
-                } else {
-                    throw new Error(data.message || 'Failed to delete response');
+                } catch (error) {
+                    console.error('Error during deletion:', error);
+                    errorDiv.textContent = error.message;
+                    errorDiv.classList.remove('d-none');
+                    this.disabled = false;
+                    spinner.classList.add('d-none');
                 }
-            } catch (error) {
-                console.error('Delete operation failed:', error);
-                let errorMessage = 'Failed to delete response. ';
-                
-                if (error.message.includes('CSRF')) {
-                    errorMessage += 'Security validation failed. Please refresh the page and try again.';
-                } else if (error.message.includes('already deleted')) {
-                    errorMessage += 'This response has already been deleted.';
-                } else if (error.message.includes('not found')) {
-                    errorMessage += 'The response could not be found.';
-                } else if (error.message.includes('invalid response')) {
-                    errorMessage += 'Server communication error. Please try again later.';
-                } else {
-                    errorMessage += 'An unexpected error occurred. Please try again.';
-                }
-                
-                errorDiv.textContent = errorMessage;
-                errorDiv.classList.remove('d-none');
-            } finally {
-                this.disabled = false;
-                spinner.classList.add('d-none');
-            }
-        });
+            });
+        }
     }
 });
 </script>

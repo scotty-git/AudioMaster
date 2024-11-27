@@ -14,7 +14,12 @@ def list_outlines():
 def generate_outline(response_id):
     """Generate a book outline from a questionnaire response."""
     # Always return JSON responses for consistency
+    current_app.logger.info(f"Received outline generation request for response {response_id}")
+    current_app.logger.info(f"Request content type: {request.content_type}")
+    current_app.logger.info(f"Request is JSON: {request.is_json}")
+
     if not request.is_json:
+        current_app.logger.error("Invalid request format. Not JSON.")
         return jsonify({
             'success': False,
             'message': 'Invalid request format. Expected JSON.'
@@ -23,6 +28,7 @@ def generate_outline(response_id):
     # Validate CSRF token
     try:
         csrf_token = request.headers.get('X-CSRFToken')
+        current_app.logger.info(f"Received CSRF token: {csrf_token}")
         if not csrf_token:
             current_app.logger.error("Missing CSRF token for outline generation")
             return jsonify({
@@ -41,7 +47,11 @@ def generate_outline(response_id):
     try:
         # Get and validate questionnaire response
         response = QuestionnaireResponse.query.get_or_404(response_id)
+        current_app.logger.info(f"Found response: {response}")
+        current_app.logger.info(f"Response status: {response.status}")
+        
         if not response:
+            current_app.logger.error(f"Questionnaire response {response_id} not found")
             return jsonify({
                 'success': False,
                 'message': 'Questionnaire response not found.'
@@ -49,6 +59,7 @@ def generate_outline(response_id):
             
         # Check if response is in valid state
         if response.status != 'submitted':
+            current_app.logger.error(f"Invalid response status: {response.status}")
             return jsonify({
                 'success': False,
                 'message': f'Invalid response status: {response.status}. Response must be submitted first.'
@@ -64,6 +75,7 @@ def generate_outline(response_id):
         
         try:
             # Generate outline using AI service
+            current_app.logger.info(f"Response data: {response.responses}")
             outline_data = ai_service.generate_outline(response.responses)
             current_app.logger.info(f"AI outline generation completed for response {response_id}")
             
@@ -85,6 +97,7 @@ def generate_outline(response_id):
             
         except ValueError as e:
             error_msg = str(e)
+            current_app.logger.error(f"Validation error: {error_msg}")
             if 'validation' in error_msg.lower():
                 error_msg = f"AI response validation failed: {error_msg}"
             elif 'json' in error_msg.lower():
@@ -93,6 +106,7 @@ def generate_outline(response_id):
             
         except Exception as e:
             error_msg = str(e)
+            current_app.logger.error(f"Outline generation error: {error_msg}")
             if 'timeout' in error_msg.lower():
                 error_msg = "Request timed out. The outline generation is taking longer than expected. Please try again."
             elif 'rate limit' in error_msg.lower():

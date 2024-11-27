@@ -3,16 +3,15 @@ from flask import current_app
 import json
 import time
 from tenacity import retry, stop_after_attempt, wait_exponential
-from openai import RateLimitError, APIError
+from openai import OpenAI
+from openai import OpenAIError, APIError, RateLimitError
 
 class AIService:
     def __init__(self):
-        self.client = openai.OpenAI(
-            api_key=current_app.config['OPENAI_API_KEY']
-        )
-        self.max_retries = 2  # Reduced to 2 retries
+        self.client = OpenAI(api_key=current_app.config['OPENAI_API_KEY'])
+        self.max_retries = 2
         self.base_wait = 1
-        self.request_timeout = 60  # 60 seconds timeout
+        self.request_timeout = 60
         self._verify_api_key()
 
     def _verify_api_key(self):
@@ -27,16 +26,10 @@ class AIService:
                 max_tokens=5
             )
             current_app.logger.info("OpenAI API key verification successful")
-        except openai.AuthenticationError as e:
-            current_app.logger.error(f"OpenAI API authentication failed: {str(e)}")
-            raise ValueError("Invalid API key. Please check your OpenAI API key configuration.")
-        except openai.RateLimitError as e:
-            current_app.logger.error(f"OpenAI API rate limit hit during verification: {str(e)}")
-            raise ValueError("Rate limit exceeded. Please try again later.")
-        except Exception as e:
-            current_app.logger.error(f"OpenAI API key verification failed: {str(e)}")
-            raise ValueError("Failed to verify OpenAI API key. Please check your configuration.")
-    
+        except OpenAIError as e:
+            current_app.logger.error(f"OpenAI API error: {str(e)}")
+            raise ValueError("OpenAI API error. Please check your configuration.")
+            
     @retry(stop=stop_after_attempt(2), 
            wait=wait_exponential(multiplier=1, min=4, max=10),
            retry=lambda e: isinstance(e, (RateLimitError, APIError)))
