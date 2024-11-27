@@ -1,37 +1,81 @@
-2024-11-27 10:39:24,249 ERROR: Error generating outline: Failed to generate valid outline after 3 attempts: Each chapter must include: {'estimated_duration', 'summary', 'title', 'number', 'key_points'} [in /home/runner/AudioMaster/routes/outlines.py:95]
-2024-11-27 10:39:35,205 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
-2024-11-27 10:41:11,667 INFO: OpenAI API key verification successful [in /home/runner/AudioMaster/services/ai_service.py:28]
-2024-11-27 10:41:11,668 INFO: Starting outline generation for response 621bad4a-ac64-435b-9c23-a96615c784fe [in /home/runner/AudioMaster/routes/outlines.py:39]
-2024-11-27 10:41:12,608 INFO: Generating outline with OpenAI (attempt 1/3) [in /home/runner/AudioMaster/services/ai_service.py:49]
-2024-11-27 10:41:24,348 WARNING: Invalid response format (attempt 1/3): Each chapter must include: {'title', 'summary', 'key_points', 'estimated_duration', 'number'} [in /home/runner/AudioMaster/services/ai_service.py:72]
-2024-11-27 10:41:24,349 INFO: Generating outline with OpenAI (attempt 2/3) [in /home/runner/AudioMaster/services/ai_service.py:49]
-2024-11-27 10:41:37,596 WARNING: Invalid response format (attempt 2/3): Each chapter must include: {'title', 'summary', 'key_points', 'estimated_duration', 'number'} [in /home/runner/AudioMaster/services/ai_service.py:72]
-2024-11-27 10:41:37,596 INFO: Generating outline with OpenAI (attempt 3/3) [in /home/runner/AudioMaster/services/ai_service.py:49]
-2024-11-27 10:41:50,757 INFO: Successfully generated and validated outline [in /home/runner/AudioMaster/services/ai_service.py:67]
-2024-11-27 10:41:50,757 INFO: AI outline generation completed for response 621bad4a-ac64-435b-9c23-a96615c784fe [in /home/runner/AudioMaster/routes/outlines.py:47]
-2024-11-27 10:41:51,740 INFO: Outline saved to database with id b59f2c75-f85c-4f3d-b149-943859c9f099 [in /home/runner/AudioMaster/routes/outlines.py:56]
-2024-11-27 10:44:09,382 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
-2024-11-27 10:48:36,610 INFO: OpenAI API key verification successful [in /home/runner/AudioMaster/services/ai_service.py:28]
-2024-11-27 10:48:36,611 INFO: Starting outline generation for response 26b180cc-9478-4ed4-8258-646e7cb4baa2 [in /home/runner/AudioMaster/routes/outlines.py:39]
-2024-11-27 10:48:37,568 INFO: Generating outline with OpenAI (attempt 1/3) [in /home/runner/AudioMaster/services/ai_service.py:49]
-2024-11-27 10:50:32,096 WARNING: Invalid response format (attempt 1/3): Invalid JSON format: Expecting ':' delimiter: line 3057 column 1 (char 35414) [in /home/runner/AudioMaster/services/ai_service.py:72]
-2024-11-27 10:50:32,097 INFO: Generating outline with OpenAI (attempt 2/3) [in /home/runner/AudioMaster/services/ai_service.py:49]
-2024-11-27 10:50:53,568 WARNING: Invalid response format (attempt 2/3): Invalid JSON format: Unterminated string starting at: line 75 column 14 (char 3485) [in /home/runner/AudioMaster/services/ai_service.py:72]
-2024-11-27 10:50:53,568 INFO: Generating outline with OpenAI (attempt 3/3) [in /home/runner/AudioMaster/services/ai_service.py:49]
-2024-11-27 10:52:54,102 WARNING: Invalid response format (attempt 3/3): Invalid JSON format: Expecting ':' delimiter: line 3077 column 1 (char 29753) [in /home/runner/AudioMaster/services/ai_service.py:72]
-2024-11-27 10:52:54,339 ERROR: Validation error during outline generation: Invalid response format from AI service. Please try again. [in /home/runner/AudioMaster/routes/outlines.py:84]
-2024-11-27 10:53:07,346 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
-2024-11-27 10:57:55,386 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
-2024-11-27 10:58:51,189 INFO: OpenAI API key verification successful [in /home/runner/AudioMaster/services/ai_service.py:29]
-2024-11-27 10:58:51,189 INFO: Starting outline generation for response 3bec73ad-50ec-4266-8ab6-4bc2b7a4baca [in /home/runner/AudioMaster/routes/outlines.py:47]
-2024-11-27 10:58:52,143 INFO: Generating outline with OpenAI (attempt 1/2) [in /home/runner/AudioMaster/services/ai_service.py:51]
-2024-11-27 11:01:11,863 WARNING: Validation error (attempt 1/2): Each chapter must include: {'estimated_duration', 'title', 'key_points', 'number', 'summary'} [in /home/runner/AudioMaster/services/ai_service.py:87]
-2024-11-27 11:01:11,866 INFO: Generating outline with OpenAI (attempt 2/2) [in /home/runner/AudioMaster/services/ai_service.py:51]
-2024-11-27 11:01:19,042 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
-2024-11-27 11:03:13,774 INFO: OpenAI API key verification successful [in /home/runner/AudioMaster/services/ai_service.py:29]
-2024-11-27 11:03:13,776 INFO: Starting outline generation for response ff943a0a-a626-46c9-b80c-77cf91e4ea7a [in /home/runner/AudioMaster/routes/outlines.py:59]
-2024-11-27 11:03:14,713 INFO: Generating outline with OpenAI (attempt 1/2) [in /home/runner/AudioMaster/services/ai_service.py:51]
-2024-11-27 11:03:32,798 INFO: Successfully generated and validated outline [in /home/runner/AudioMaster/services/ai_service.py:75]
-2024-11-27 11:03:32,799 INFO: AI outline generation completed for response ff943a0a-a626-46c9-b80c-77cf91e4ea7a [in /home/runner/AudioMaster/routes/outlines.py:68]
-2024-11-27 11:03:33,737 INFO: Outline saved to database with id d01a1c2c-db47-4c3d-b3ec-eb8946e13a21 [in /home/runner/AudioMaster/routes/outlines.py:78]
-2024-11-27 11:07:04,165 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
+2024-11-27 11:10:10,404 ERROR: Exception on /prompts [GET] [in /home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py:875]
+Traceback (most recent call last):
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column prompt_templates.version does not exist
+LINE 1: ...emplates.is_active AS prompt_templates_is_active, prompt_tem...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/routes/prompts.py", line 9, in list_prompts
+    prompts = PromptTemplate.query.all()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2673, in all
+    return self._iter().all()  # type: ignore
+           ^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2827, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2362, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2247, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 305, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1418, in execute
+    return meth(
+           ^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1640, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column prompt_templates.version does not exist
+LINE 1: ...emplates.is_active AS prompt_templates_is_active, prompt_tem...
+                                                             ^
+
+[SQL: SELECT prompt_templates.id AS prompt_templates_id, prompt_templates.name AS prompt_templates_name, prompt_templates.description AS prompt_templates_description, prompt_templates.type AS prompt_templates_type, prompt_templates.template_content AS prompt_templates_template_content, prompt_templates.variables AS prompt_templates_variables, prompt_templates.is_active AS prompt_templates_is_active, prompt_templates.version AS prompt_templates_version, prompt_templates.last_edited_by AS prompt_templates_last_edited_by, prompt_templates.created_at AS prompt_templates_created_at, prompt_templates.updated_at AS prompt_templates_updated_at 
+FROM prompt_templates]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2024-11-27 11:10:51,188 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
+2024-11-27 11:13:50,237 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
+2024-11-27 11:14:39,756 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
+2024-11-27 11:14:41,325 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
+2024-11-27 11:14:47,132 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
+2024-11-27 11:15:10,049 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
+2024-11-27 11:15:33,863 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
+2024-11-27 11:15:35,384 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
+2024-11-27 11:16:13,459 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
+2024-11-27 11:16:15,254 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]

@@ -1,114 +1,71 @@
-2024-11-26 20:32:59,342 ERROR: Exception on /prompts [GET] [in /Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py:875]
+2024-11-27 11:09:20,916 ERROR: Exception on /prompts [GET] [in /home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py:875]
 Traceback (most recent call last):
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column prompt_templates.version does not exist
+LINE 1: ...emplates.is_active AS prompt_templates_is_active, prompt_tem...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
     response = self.full_dispatch_request()
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
     rv = self.handle_user_exception(e)
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
          ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 285, in decorated_view
-    return current_app.login_manager.unauthorized()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/login_manager.py", line 196, in unauthorized
-    redirect_url = make_login_url(login_view, next_url=request.url)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 120, in login_url
-    base = expand_login_view(login_view)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 97, in expand_login_view
-    return url_for(login_view)
-           ^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/helpers.py", line 232, in url_for
-    return current_app.url_for(
-           ^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1121, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1110, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'auth.login'. Did you mean 'outlines.view_outline' instead?
-2024-11-26 20:33:02,329 ERROR: Exception on /prompts [GET] [in /Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py:875]
-Traceback (most recent call last):
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
-    response = self.full_dispatch_request()
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-         ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 285, in decorated_view
-    return current_app.login_manager.unauthorized()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/login_manager.py", line 196, in unauthorized
-    redirect_url = make_login_url(login_view, next_url=request.url)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 120, in login_url
-    base = expand_login_view(login_view)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 97, in expand_login_view
-    return url_for(login_view)
-           ^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/helpers.py", line 232, in url_for
-    return current_app.url_for(
-           ^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1121, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1110, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'auth.login'. Did you mean 'outlines.view_outline' instead?
-2024-11-26 20:33:41,116 ERROR: Exception on /prompts [GET] [in /Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py:875]
-Traceback (most recent call last):
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
-    response = self.full_dispatch_request()
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-         ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 285, in decorated_view
-    return current_app.login_manager.unauthorized()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/login_manager.py", line 196, in unauthorized
-    redirect_url = make_login_url(login_view, next_url=request.url)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 120, in login_url
-    base = expand_login_view(login_view)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 97, in expand_login_view
-    return url_for(login_view)
-           ^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/helpers.py", line 232, in url_for
-    return current_app.url_for(
-           ^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1121, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1110, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'auth.login'. Did you mean 'outlines.view_outline' instead?
+  File "/home/runner/AudioMaster/routes/prompts.py", line 9, in list_prompts
+    prompts = PromptTemplate.query.all()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2673, in all
+    return self._iter().all()  # type: ignore
+           ^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2827, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2362, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2247, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 305, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1418, in execute
+    return meth(
+           ^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1640, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column prompt_templates.version does not exist
+LINE 1: ...emplates.is_active AS prompt_templates_is_active, prompt_tem...
+                                                             ^
+
+[SQL: SELECT prompt_templates.id AS prompt_templates_id, prompt_templates.name AS prompt_templates_name, prompt_templates.description AS prompt_templates_description, prompt_templates.type AS prompt_templates_type, prompt_templates.template_content AS prompt_templates_template_content, prompt_templates.variables AS prompt_templates_variables, prompt_templates.is_active AS prompt_templates_is_active, prompt_templates.version AS prompt_templates_version, prompt_templates.last_edited_by AS prompt_templates_last_edited_by, prompt_templates.created_at AS prompt_templates_created_at, prompt_templates.updated_at AS prompt_templates_updated_at 
+FROM prompt_templates]
+(Background on this error at: https://sqlalche.me/e/20/f405)
