@@ -45,3 +45,8 @@ werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'auth.l
 2024-11-27 13:43:47,807 ERROR: Error getting routes: 'MapAdapter' object has no attribute 'iter_rules' [in /Users/calsmith/CascadeProjects/AudioMaster/routes/docs.py:37]
 2024-11-27 13:44:50,855 ERROR: Error getting routes: 'MapAdapter' object has no attribute 'iter_rules' [in /Users/calsmith/CascadeProjects/AudioMaster/routes/docs.py:37]
 2024-11-27 13:45:52,636 ERROR: Error getting routes: 'MapAdapter' object has no attribute 'iter_rules' [in /Users/calsmith/CascadeProjects/AudioMaster/routes/docs.py:37]
+2024-11-27 10:08:16,279 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
+2024-11-27 10:08:59,841 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
+2024-11-27 10:09:46,131 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
+2024-11-27 10:10:33,209 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
+2024-11-27 10:11:24,302 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
