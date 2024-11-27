@@ -58,6 +58,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint and request.endpoint.startswith('outlines.') %}active{% endif %}" 
+                           href="{{ url_for('outlines.list_outlines') }}">
+                           <i class="bi bi-diagram-2"></i> Outlines
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {% if request.endpoint and request.endpoint.startswith('prompts.') %}active{% endif %}" 
                            href="{{ url_for('prompts.list_prompts') }}">
                            <i class="bi bi-chat-square-text"></i> Prompts
