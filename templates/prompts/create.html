@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Create New Prompt Template</h1>
+            
+            <form id="createPromptForm" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Template Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                    <div class="invalid-feedback">Please provide a template name.</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    <div class="invalid-feedback">Please provide a description.</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="type" class="form-label">Type</label>
+                    <select class="form-select" id="type" name="type" required>
+                        <option value="">Select a type...</option>
+                        <option value="outline">Book Outline</option>
+                        <option value="chapter">Chapter Content</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a type.</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="template_content" class="form-label">Template Content</label>
+                    <textarea class="form-control" id="template_content" name="template_content" rows="10" required></textarea>
+                    <div class="invalid-feedback">Please provide template content.</div>
+                    <small class="form-text text-muted">Use {variable_name} for template variables.</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="variables" class="form-label">Variables (JSON)</label>
+                    <textarea class="form-control" id="variables" name="variables" rows="4"></textarea>
+                    <small class="form-text text-muted">Example: {"user_name": "User's full name", "age": "User's age"}</small>
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ url_for('prompts.list_prompts') }}'">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Template</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('createPromptForm');
+    
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Form validation
+        if (!form.checkValidity()) {
+            e.stopPropagation();
+            form.classList.add('was-validated');
+            return;
+        }
+        
+        // Prepare data
+        const formData = {
+            name: document.getElementById('name').value,
+            description: document.getElementById('description').value,
+            type: document.getElementById('type').value,
+            template_content: document.getElementById('template_content').value,
+            variables: {}
+        };
+        
+        // Parse variables JSON if provided
+        const variablesText = document.getElementById('variables').value;
+        if (variablesText.trim()) {
+            try {
+                formData.variables = JSON.parse(variablesText);
+            } catch (error) {
+                alert('Invalid JSON in variables field');
+                return;
+            }
+        }
+        
+        try {
+            const response = await fetch('{{ url_for('prompts.create_prompt') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                window.location.href = result.redirect_url;
+            } else {
+                alert(result.message || 'Failed to create template');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to create template. Please try again.');
+        }
+    });
+});
+</script>
+{% endblock %}

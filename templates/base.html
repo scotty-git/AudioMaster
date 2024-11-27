@@ -63,6 +63,12 @@
                            <i class="bi bi-chat-square-text"></i> Prompts
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint and request.endpoint.startswith('docs.') %}active{% endif %}" 
+                           href="{{ url_for('docs.documentation') }}">
+                           <i class="bi bi-book"></i> Documentation
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

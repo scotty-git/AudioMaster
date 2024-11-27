@@ -5,143 +5,160 @@
 {% block content %}
 <div class="container-fluid">
     <div class="row">
-        <div class="col-12 mb-4">
-            <div class="card bg-dark text-white">
+        <div class="col-md-3">
+            <div class="card sticky-top">
+                <div class="card-header">
+                    <h3>🗺️ Your Navigation Map</h3>
+                </div>
                 <div class="card-body">
-                    <h1 class="display-4"><i class="bi bi-book me-3"></i>Welcome to AudioMaster 🎧</h1>
-                    
-                    <div class="overview-section">
-                        <h2 class="mt-4">🚀 What is AudioMaster?</h2>
-                        <p class="lead">
-                            Think of AudioMaster like a magical workshop where you can turn your creative ideas 
-                            into amazing audio projects - no technical superpowers required! 
-                            We're here to make audio creation as easy as telling a story.
-                        </p>
+                    <pre class="navigation-map">
+🚀 AudioMaster Journey
 
-                        <div class="alert alert-info">
-                            <h3>🌟 Beginner's Promise</h3>
-                            <p>
-                                Don't worry if tech stuff makes your head spin. AudioMaster is designed 
-                                to be your friendly companion. We'll break down complex things into 
-                                simple, understandable steps. You're in a judgment-free zone! 
+🏗️ Templates
+  ├── 🆕 Create Template
+  ├── 📋 List Templates
+  ├── 👀 View Details
+  ├── ✏️ Edit Template
+  └── 🗑️ Delete Template
+
+📝 Questionnaires
+  ├── 📥 Respond to Template
+  ├── 📊 List Responses
+  ├── 🔍 View Response
+  └── ❌ Delete Response
+
+💡 Prompts
+  ├── ➕ Create Prompt
+  ├── 📜 List Prompts
+  ├── 📝 Edit Prompt
+  └── 🔙 Restore Version
+
+📖 Outlines
+  ├── 🔬 Generate from Response
+  ├── 📚 List Outlines
+  └── 🔎 View Details
+
+🎧 Audiobooks
+  ├── 🎼 Generate from Outline
+  └── 🎵 View Audiobook
+                    </pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="col-12 mb-4">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h1 class="display-4"><i class="bi bi-book me-3"></i>Welcome to AudioMaster 🎧</h1>
+                        
+                        <div class="overview-section">
+                            <h2 class="mt-4">🚀 What is AudioMaster?</h2>
+                            <p class="lead">
+                                Think of AudioMaster like a magical workshop where you can turn your creative ideas 
+                                into amazing audio projects - no technical superpowers required! 
+                                We're here to make audio creation as easy as telling a story.
                             </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3><i class="bi bi-signpost-2 me-2"></i>Your Navigation Map 🗺️</h3>
-                </div>
-                <div class="card-body">
-                    <p>
-                        These are like the street signs in our AudioMaster city. 
-                        Each route is a path that helps you do something cool!
-                    </p>
-                    <div class="list-group">
-                        {% for route in routes_info %}
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">{{ route.name }}</h5>
-                                <small class="text-muted">{{ route.module }}</small>
+                            <div class="alert alert-info">
+                                <h3>🌟 Beginner's Promise</h3>
+                                <p>
+                                    Don't worry if tech stuff makes your head spin. AudioMaster is designed 
+                                    to be your friendly companion. We'll break down complex things into 
+                                    simple, understandable steps. You're in a judgment-free zone! 
+                                </p>
                             </div>
-                            <p class="mb-1">Methods: {{ route.methods|join(', ') }}</p>
-                            <small class="text-muted">URLs: {{ route.url_rules|join(', ') }}</small>
-                        </a>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3><i class="bi bi-palette me-2"></i>Your Design Playground 🎨</h3>
-                </div>
-                <div class="card-body">
-                    <p>
-                        These are like the different rooms in our creative house. 
-                        Each template is a special space where magic happens!
-                    </p>
-                    {% for category, templates in template_info.items() %}
-                    <div class="card bg-light mb-2">
-                        <div class="card-header">
-                            <h4>{{ category|title }} Zone</h4>
                         </div>
-                        <ul class="list-group list-group-flush">
-                            {% for template in templates %}
-                            <li class="list-group-item">
-                                <i class="bi bi-file-earmark-code me-2"></i>{{ template }}
-                            </li>
-                            {% endfor %}
-                        </ul>
                     </div>
-                    {% endfor %}
                 </div>
             </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3><i class="bi bi-database me-2"></i>Your Memory Bank 💾</h3>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3><i class="bi bi-palette me-2"></i>Your Design Playground 🎨</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                These are like the different rooms in our creative house. 
+                                Each template is a special space where magic happens!
+                            </p>
+                            {% for category, templates in template_info.items() %}
+                            <div class="card bg-light mb-2">
+                                <div class="card-header">
+                                    <h4>{{ category|title }} Zone</h4>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    {% for template in templates %}
+                                    <li class="list-group-item">
+                                        <i class="bi bi-file-earmark-code me-2"></i>{{ template }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <p>
-                        This is where AudioMaster remembers everything - like a super-smart 
-                        notebook that never forgets a detail!
-                    </p>
-                    <div class="accordion" id="databaseAccordion">
-                        {% for table in database_info %}
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="heading{{ loop.index }}">
-                                <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" 
-                                        type="button" 
-                                        data-bs-toggle="collapse" 
-                                        data-bs-target="#collapse{{ loop.index }}">
-                                    {{ table.name }}
-                                </button>
-                            </h2>
-                            <div id="collapse{{ loop.index }}" 
-                                 class="accordion-collapse collapse {% if loop.first %}show{% endif %}"
-                                 data-bs-parent="#databaseAccordion">
-                                <div class="accordion-body">
-                                    <strong>Table Name:</strong> {{ table.table_name }}<br>
-                                    <strong>Columns:</strong> {{ table.columns|join(', ') }}
+
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h3><i class="bi bi-database me-2"></i>Your Memory Bank 💾</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                This is where AudioMaster remembers everything - like a super-smart 
+                                notebook that never forgets a detail!
+                            </p>
+                            <div class="accordion" id="databaseAccordion">
+                                {% for table in database_info %}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading{{ loop.index }}">
+                                        <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" 
+                                                type="button" 
+                                                data-bs-toggle="collapse" 
+                                                data-bs-target="#collapse{{ loop.index }}">
+                                            {{ table.name }}
+                                        </button>
+                                    </h2>
+                                    <div id="collapse{{ loop.index }}" 
+                                         class="accordion-collapse collapse {% if loop.first %}show{% endif %}"
+                                         data-bs-parent="#databaseAccordion">
+                                        <div class="accordion-body">
+                                            <strong>Table Name:</strong> {{ table.table_name }}<br>
+                                            <strong>Columns:</strong> {{ table.columns|join(', ') }}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <p class="text-muted">
+                                <i class="bi bi-clock me-2"></i>
+                                Last Brain Refresh: {{ last_updated }} 🧠
+                            </p>
+                            <div class="alert alert-secondary">
+                                <h4>🤖 System Vitals</h4>
+                                <div class="row">
+                                    {% for key, value in system_info.items() %}
+                                    <div class="col-md-4 mb-2">
+                                        <span class="badge bg-info">
+                                            {{ key|replace('_', ' ')|title }}: {{ value }}
+                                        </span>
+                                    </div>
+                                    {% endfor %}
                                 </div>
                             </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body text-center">
-                    <p class="text-muted">
-                        <i class="bi bi-clock me-2"></i>
-                        Last Brain Refresh: {{ last_updated }} 🧠
-                    </p>
-                    <div class="alert alert-secondary">
-                        <h4>🤖 System Vitals</h4>
-                        <div class="row">
-                            {% for key, value in system_info.items() %}
-                            <div class="col-md-4 mb-2">
-                                <span class="badge bg-info">
-                                    {{ key|replace('_', ' ')|title }}: {{ value }}
-                                </span>
-                            </div>
-                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -158,6 +175,21 @@
         border-bottom: 2px solid #4ecdc4;
         padding-bottom: 10px;
         margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .navigation-map {
+        background-color: #1a1a2e;
+        color: #7fff00;
+        font-family: 'Courier New', monospace;
+        padding: 15px;
+        border-radius: 5px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        font-size: 0.9em;
     }
 </style>
 {% endblock %}

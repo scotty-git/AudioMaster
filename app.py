@@ -48,7 +48,7 @@ def create_app():
     app.logger.info('AudioV4 startup')
     
     # Register blueprints
-    from routes import templates, questionnaires, outlines, audiobooks, prompts
+    from routes import templates, questionnaires, outlines, audiobooks, prompts, docs
     
     # Configure user loader
     from models import User
@@ -62,6 +62,7 @@ def create_app():
     app.register_blueprint(outlines.bp)
     app.register_blueprint(audiobooks.bp)
     app.register_blueprint(prompts.bp)
+    app.register_blueprint(docs.docs)  # Register the docs blueprint
     
     # Add root route
     @app.route('/')

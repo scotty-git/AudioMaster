@@ -37,3 +37,11 @@ Traceback (most recent call last):
     raise BuildError(endpoint, values, method, self)
 werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'auth.login'. Did you mean 'outlines.view_outline' instead?
 2024-11-26 20:36:12,551 INFO: AudioV4 startup [in /Users/calsmith/CascadeProjects/AudioMaster/app.py:48]
+2024-11-27 13:31:02,157 INFO: AudioV4 startup [in /Users/calsmith/CascadeProjects/AudioMaster/app.py:48]
+2024-11-27 13:32:24,812 ERROR: Error getting routes: 'MapAdapter' object has no attribute 'iter_rules' [in /Users/calsmith/CascadeProjects/AudioMaster/routes/docs.py:37]
+2024-11-27 13:33:38,114 ERROR: Error getting routes: 'MapAdapter' object has no attribute 'iter_rules' [in /Users/calsmith/CascadeProjects/AudioMaster/routes/docs.py:37]
+2024-11-27 13:39:57,452 ERROR: Error getting routes: 'MapAdapter' object has no attribute 'iter_rules' [in /Users/calsmith/CascadeProjects/AudioMaster/routes/docs.py:37]
+2024-11-27 13:42:05,692 ERROR: Error getting routes: 'MapAdapter' object has no attribute 'iter_rules' [in /Users/calsmith/CascadeProjects/AudioMaster/routes/docs.py:37]
+2024-11-27 13:43:47,807 ERROR: Error getting routes: 'MapAdapter' object has no attribute 'iter_rules' [in /Users/calsmith/CascadeProjects/AudioMaster/routes/docs.py:37]
+2024-11-27 13:44:50,855 ERROR: Error getting routes: 'MapAdapter' object has no attribute 'iter_rules' [in /Users/calsmith/CascadeProjects/AudioMaster/routes/docs.py:37]
+2024-11-27 13:45:52,636 ERROR: Error getting routes: 'MapAdapter' object has no attribute 'iter_rules' [in /Users/calsmith/CascadeProjects/AudioMaster/routes/docs.py:37]

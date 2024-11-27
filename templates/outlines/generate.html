@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Generate New Outline{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Generate New Book Outline</h1>
+
+    {% if responses %}
+    <div class="row">
+        {% for response in responses %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ response.template.title }}</h5>
+                    <p class="card-text text-muted">
+                        Submitted: {{ response.created_at.strftime('%Y-%m-%d %H:%M') }}
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-info">{{ response.status|title }}</span>
+                        <form action="{{ url_for('outlines.generate_outline', response_id=response.id) }}" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                Generate Outline
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <h4 class="alert-heading">No Responses Available</h4>
+        <p>You need to submit a questionnaire response before generating an outline.</p>
+        <hr>
+        <p class="mb-0">
+            <a href="{{ url_for('questionnaires.list_templates') }}" class="alert-link">
+                Go to Questionnaires
+            </a>
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
