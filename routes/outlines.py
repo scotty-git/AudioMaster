@@ -5,6 +5,11 @@ from flask_wtf.csrf import validate_csrf, ValidationError
 
 bp = Blueprint('outlines', __name__)
 
+@bp.route('/outlines', methods=['GET'])
+def list_outlines():
+    outlines = BookOutline.query.order_by(BookOutline.created_at.desc()).all()
+    return render_template('outlines/list.html', outlines=outlines)
+
 @bp.route('/outlines/generate/<response_id>', methods=['POST'])
 def generate_outline(response_id):
     # Validate CSRF token
@@ -91,7 +96,13 @@ def generate_outline(response_id):
         flash('Error generating outline. Please try again.', 'error')
         return redirect(url_for('questionnaires.view_response', response_id=response_id))
 
-@bp.route('/outlines/<outline_id>')
+@bp.route('/outlines/generate/new', methods=['GET'])
+def new_outline():
+    # Render a page to select a questionnaire response for outline generation
+    responses = QuestionnaireResponse.query.filter_by(status='submitted').all()
+    return render_template('outlines/generate.html', responses=responses)
+
+@bp.route('/outlines/<outline_id>', methods=['GET'])
 def view_outline(outline_id):
     outline = BookOutline.query.get_or_404(outline_id)
     return render_template('outlines/view.html', outline=outline)
