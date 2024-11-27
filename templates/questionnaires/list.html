@@ -88,77 +88,52 @@
         </div>
     </div>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle outline generation forms
-    document.querySelectorAll('form[id^="generateOutlineForm-"]').forEach(form => {
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const responseId = this.id.split('-')[1];
-            const btn = document.getElementById(`generateOutlineBtn-${responseId}`);
-            const spinner = btn.querySelector('.spinner-border');
-            const buttonText = btn.querySelector('.button-text');
+document.querySelectorAll('[id^="generateOutlineForm-"]').forEach(form => {
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const responseId = this.id.split('-')[1];
+        const btn = document.getElementById(`generateOutlineBtn-${responseId}`);
+        const spinner = btn.querySelector('.spinner-border');
+        const buttonText = btn.querySelector('.button-text');
+        
+        // Show loading state
+        btn.disabled = true;
+        spinner.classList.remove('d-none');
+        buttonText.textContent = 'Generating...';
+        
+        try {
+            const response = await fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+                }
+            });
             
-            // Show loading state
-            btn.disabled = true;
-            spinner.classList.remove('d-none');
-            buttonText.textContent = 'Generating...';
+            const data = await response.json();
             
-            try {
-                const response = await fetch(this.action, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({}),
-                    timeout: 60000 // 60 seconds timeout
-                });
-                
-                let data;
-                try {
-                    data = await response.json();
-                } catch (parseError) {
-                    console.error('Error parsing response:', parseError);
-                    throw new Error('Server returned an invalid response. Please try again later.');
-                }
-                
-                if (!response.ok) {
-                    throw new Error(data.message || 'Failed to generate outline');
-                }
-                
-                if (data.success) {
-                    window.location.href = data.redirect_url;
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                
-                // Show error alert
-                const alertDiv = document.createElement('div');
-                alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-                let errorMessage = error.message;
-                
-                // Add more context to common errors
-                if (errorMessage.includes('timeout')) {
-                    errorMessage = 'Request timed out. The outline generation is taking longer than expected. Please try again.';
-                } else if (errorMessage.includes('validation')) {
-                    errorMessage = 'AI response validation failed. Please try again.';
-                } else if (errorMessage.includes('CSRF')) {
-                    errorMessage = 'Security validation failed. Please refresh the page and try again.';
-                }
-                
-                alertDiv.innerHTML = `
-                    <strong>Error generating outline:</strong> ${errorMessage}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                `;
-                this.closest('.container').insertBefore(alertDiv, this.closest('.table-responsive'));
-                
-                // Reset button state
-                btn.disabled = false;
-                spinner.classList.add('d-none');
-                buttonText.textContent = 'Generate Outline';
+            if (data.success) {
+                window.location.href = data.redirect_url;
+            } else {
+                throw new Error(data.message || 'Failed to generate outline');
             }
-        });
+        } catch (error) {
+            console.error('Error:', error);
+            btn.disabled = false;
+            spinner.classList.add('d-none');
+            buttonText.textContent = 'Generate Outline';
+            
+            // Show error alert
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                <strong>Error:</strong> ${error.message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.table-responsive'));
+        }
     });
 });
 </script>

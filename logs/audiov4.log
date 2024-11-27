@@ -21,3 +21,4 @@
 2024-11-27 10:52:54,102 WARNING: Invalid response format (attempt 3/3): Invalid JSON format: Expecting ':' delimiter: line 3077 column 1 (char 29753) [in /home/runner/AudioMaster/services/ai_service.py:72]
 2024-11-27 10:52:54,339 ERROR: Validation error during outline generation: Invalid response format from AI service. Please try again. [in /home/runner/AudioMaster/routes/outlines.py:84]
 2024-11-27 10:53:07,346 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]
+2024-11-27 10:57:55,386 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:48]

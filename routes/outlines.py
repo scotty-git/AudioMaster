@@ -14,10 +14,18 @@ def list_outlines():
 def generate_outline(response_id):
     # Validate CSRF token
     try:
-        if request.is_json:
-            validate_csrf(request.headers.get('X-CSRFToken'))
-        else:
-            validate_csrf(request.form.get('csrf_token'))
+        csrf_token = request.headers.get('X-CSRFToken') if request.is_json else request.form.get('csrf_token')
+        if not csrf_token:
+            current_app.logger.error("Missing CSRF token for outline generation")
+            if request.is_json:
+                return jsonify({
+                    'success': False,
+                    'message': 'Missing CSRF token. Please refresh the page and try again.'
+                }), 400
+            flash('Missing CSRF token', 'error')
+            return redirect(url_for('questionnaires.view_response', response_id=response_id))
+            
+        validate_csrf(csrf_token)
     except ValidationError:
         current_app.logger.error("CSRF validation failed for outline generation")
         if request.is_json:
