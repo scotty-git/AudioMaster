@@ -54,13 +54,13 @@
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint and request.endpoint.startswith('questionnaires.') %}active{% endif %}" 
                            href="{{ url_for('questionnaires.list_responses') }}">
-                           <i class="bi bi-list-check"></i> Questionnaires
+                           <i class="bi bi-list-check"></i> Responses
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint and request.endpoint.startswith('outlines.') %}active{% endif %}" 
                            href="{{ url_for('outlines.list_outlines') }}">
-                           <i class="bi bi-diagram-2"></i> Outlines
+                           <i class="bi bi-diagram-2"></i> Book Summaries
                         </a>
                     </li>
                     <li class="nav-item">
