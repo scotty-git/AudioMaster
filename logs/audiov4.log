@@ -47,3 +47,5 @@ jinja2.exceptions.TemplateNotFound: prompts/view.html
 2024-11-26 15:16:10,362 INFO: Generating outline with OpenAI [in /home/runner/AudioMaster/services/ai_service.py:45]
 2024-11-26 15:16:20,943 INFO: Successfully generated outline [in /home/runner/AudioMaster/services/ai_service.py:59]
 2024-11-26 15:16:21,928 INFO: Outline saved to database with id baec63dc-3c4e-424b-b004-12973428a8fe [in /home/runner/AudioMaster/routes/outlines.py:83]
+2024-11-27 07:30:54,502 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:47]
+2024-11-27 07:31:41,037 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:47]

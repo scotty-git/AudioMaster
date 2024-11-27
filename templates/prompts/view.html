@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}{{ prompt.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ prompt.name }}</h1>
+        <a href="{{ url_for('prompts.edit_prompt', prompt_id=prompt.id) }}" 
+           class="btn btn-primary">Edit Prompt</a>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Description</h5>
+            <p class="card-text">{{ prompt.description }}</p>
+            <div class="mt-2">
+                <span class="badge bg-info">{{ prompt.type|title }}</span>
+                <span class="badge bg-{{ 'success' if prompt.is_active else 'danger' }}">
+                    {{ 'Active' if prompt.is_active else 'Inactive' }}
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title mb-0">Template Content</h3>
+        </div>
+        <div class="card-body">
+            <pre class="bg-dark text-light p-3 rounded"><code>{{ prompt.template_content }}</code></pre>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title mb-0">Available Variables</h3>
+        </div>
+        <div class="card-body">
+            {% if prompt.variables %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Variable Name</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for var_name, description in prompt.variables.items() %}
+                            <tr>
+                                <td><code>{{ var_name }}</code></td>
+                                <td>{{ description }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">No variables defined for this template.</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <a href="{{ url_for('prompts.list_prompts') }}" 
+           class="btn btn-outline-secondary">Back to Prompts</a>
+    </div>
+</div>
+{% endblock %}
