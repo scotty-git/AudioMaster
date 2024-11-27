@@ -23,22 +23,26 @@ def generate_outline(response_id):
         if request.is_json:
             return jsonify({
                 'success': False,
-                'message': 'Invalid CSRF token'
+                'message': 'Invalid CSRF token. Please refresh the page and try again.'
             }), 400
         flash('Invalid CSRF token', 'error')
         return redirect(url_for('questionnaires.view_response', response_id=response_id))
-    response = QuestionnaireResponse.query.get_or_404(response_id)
-    ai_service = AIService()
-    
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        # Handle AJAX request
+
+    try:
+        response = QuestionnaireResponse.query.get_or_404(response_id)
+        
+        # Check if response is in valid state
+        if response.status != 'submitted':
+            raise ValueError(f"Invalid response status: {response.status}. Response must be in 'submitted' state.")
+            
+        ai_service = AIService()
+        current_app.logger.info(f"Starting outline generation for response {response_id}")
+        
+        # Update response status to processing
+        response.status = 'processing'
+        db.session.commit()
+        
         try:
-            current_app.logger.info(f"Starting outline generation for response {response_id}")
-            
-            # Update response status to processing
-            response.status = 'processing'
-            db.session.commit()
-            
             outline_data = ai_service.generate_outline(response.responses)
             current_app.logger.info(f"AI outline generation completed for response {response_id}")
             
@@ -51,27 +55,54 @@ def generate_outline(response_id):
             db.session.commit()
             current_app.logger.info(f"Outline saved to database with id {outline.id}")
             
-            return jsonify({
+            success_response = {
                 'success': True,
                 'message': 'Outline generated successfully!',
                 'redirect_url': url_for('outlines.view_outline', outline_id=outline.id)
-            })
+            }
+            
+            return jsonify(success_response) if request.is_json else redirect(success_response['redirect_url'])
             
         except ValueError as e:
-            db.session.rollback()
-            current_app.logger.error(f"Validation error during outline generation: {str(e)}")
-            return jsonify({
-                'success': False,
-                'message': str(e)
-            }), 400
+            error_msg = str(e)
+            if 'validation' in error_msg.lower():
+                error_msg = f"AI response validation failed: {error_msg}"
+            elif 'json' in error_msg.lower():
+                error_msg = "Invalid response format from AI service. Please try again."
+            raise ValueError(error_msg)
             
         except Exception as e:
-            db.session.rollback()
-            current_app.logger.error(f"Error generating outline: {str(e)}")
-            return jsonify({
-                'success': False,
-                'message': 'An error occurred while generating the outline. Please try again.'
-            }), 500
+            error_msg = str(e)
+            if 'timeout' in error_msg.lower():
+                error_msg = "Request timed out. The outline generation is taking longer than expected. Please try again."
+            elif 'rate limit' in error_msg.lower():
+                error_msg = "AI service is currently busy. Please wait a few moments and try again."
+            raise Exception(error_msg)
+            
+    except ValueError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Validation error during outline generation: {str(e)}")
+        error_response = {
+            'success': False,
+            'message': str(e),
+            'error_type': 'validation_error'
+        }
+        return jsonify(error_response) if request.is_json else render_template('error.html', error=str(e)), 400
+        
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error generating outline: {str(e)}")
+        error_response = {
+            'success': False,
+            'message': str(e),
+            'error_type': 'system_error'
+        }
+        return jsonify(error_response) if request.is_json else render_template('error.html', error=str(e)), 500
+        
+    finally:
+        if 'response' in locals():
+            response.status = 'submitted'  # Reset status if error occurred
+            db.session.commit()
     
     # Handle regular POST request
     try:

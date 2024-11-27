@@ -1,4 +1,4 @@
-2024-11-26 20:31:11,744 ERROR: Exception on /templates [GET] [in /Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py:875]
+2024-11-26 20:32:59,342 ERROR: Exception on /prompts [GET] [in /Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py:875]
 Traceback (most recent call last):
   File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
     response = self.full_dispatch_request()
@@ -12,48 +12,31 @@ Traceback (most recent call last):
   File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/routes/templates.py", line 10, in list_templates
-    return render_template('templates/list.html', templates=templates)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-         ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/Users/calsmith/CascadeProjects/AudioMaster/templates/templates/list.html", line 1, in top-level template code
-    {% extends "base.html" %}
-  File "/Users/calsmith/CascadeProjects/AudioMaster/templates/base.html", line 83, in top-level template code
-    {% block content %}{% endblock %}
-    ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/templates/templates/list.html", line 27, in block 'content'
-    <a href="{{ url_for('templates.edit_template', template_id=template.id) }}"
-    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 285, in decorated_view
+    return current_app.login_manager.unauthorized()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/login_manager.py", line 196, in unauthorized
+    redirect_url = make_login_url(login_view, next_url=request.url)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 120, in login_url
+    base = expand_login_view(login_view)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 97, in expand_login_view
+    return url_for(login_view)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/helpers.py", line 232, in url_for
+    return current_app.url_for(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1110, in url_for
     rv = url_adapter.build(  # type: ignore[union-attr]
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 922, in build
-    rv = self._partial_build(endpoint, values, method, append_unknown)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 801, in _partial_build
-    rv = self._partial_build(
-         ^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 814, in _partial_build
-    build_rv = rule.build(values, append_unknown)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/rules.py", line 850, in build
-    return self._build_unknown(**values)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<werkzeug routing>", line 1, in <builder:'/templates/<int:template_id>/edit'>
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/converters.py", line 163, in to_url
-    value_str = str(self.num_convert(value))
-                    ^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: invalid literal for int() with base 10: 'aeba01b9-b8bd-4626-9d8f-92e60dea0d70'
-2024-11-26 20:31:20,288 ERROR: Exception on /templates [GET] [in /Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py:875]
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'auth.login'. Did you mean 'outlines.view_outline' instead?
+2024-11-26 20:33:02,329 ERROR: Exception on /prompts [GET] [in /Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py:875]
 Traceback (most recent call last):
   File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
     response = self.full_dispatch_request()
@@ -67,45 +50,65 @@ Traceback (most recent call last):
   File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/routes/templates.py", line 10, in list_templates
-    return render_template('templates/list.html', templates=templates)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-         ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/Users/calsmith/CascadeProjects/AudioMaster/templates/templates/list.html", line 1, in top-level template code
-    {% extends "base.html" %}
-  File "/Users/calsmith/CascadeProjects/AudioMaster/templates/base.html", line 83, in top-level template code
-    {% block content %}{% endblock %}
-    ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/templates/templates/list.html", line 27, in block 'content'
-    <a href="{{ url_for('templates.edit_template', template_id=template.id) }}"
-    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 285, in decorated_view
+    return current_app.login_manager.unauthorized()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/login_manager.py", line 196, in unauthorized
+    redirect_url = make_login_url(login_view, next_url=request.url)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 120, in login_url
+    base = expand_login_view(login_view)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 97, in expand_login_view
+    return url_for(login_view)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/helpers.py", line 232, in url_for
+    return current_app.url_for(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1110, in url_for
     rv = url_adapter.build(  # type: ignore[union-attr]
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 922, in build
-    rv = self._partial_build(endpoint, values, method, append_unknown)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 801, in _partial_build
-    rv = self._partial_build(
-         ^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 814, in _partial_build
-    build_rv = rule.build(values, append_unknown)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/rules.py", line 850, in build
-    return self._build_unknown(**values)
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'auth.login'. Did you mean 'outlines.view_outline' instead?
+2024-11-26 20:33:41,116 ERROR: Exception on /prompts [GET] [in /Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py:875]
+Traceback (most recent call last):
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 285, in decorated_view
+    return current_app.login_manager.unauthorized()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/login_manager.py", line 196, in unauthorized
+    redirect_url = make_login_url(login_view, next_url=request.url)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 120, in login_url
+    base = expand_login_view(login_view)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<werkzeug routing>", line 1, in <builder:'/templates/<int:template_id>/edit'>
-  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/converters.py", line 163, in to_url
-    value_str = str(self.num_convert(value))
-                    ^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: invalid literal for int() with base 10: 'aeba01b9-b8bd-4626-9d8f-92e60dea0d70'
-2024-11-26 20:31:58,055 INFO: AudioV4 startup [in /Users/calsmith/CascadeProjects/AudioMaster/app.py:47]
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask_login/utils.py", line 97, in expand_login_view
+    return url_for(login_view)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/helpers.py", line 232, in url_for
+    return current_app.url_for(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/calsmith/CascadeProjects/AudioMaster/venv/lib/python3.11/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'auth.login'. Did you mean 'outlines.view_outline' instead?
