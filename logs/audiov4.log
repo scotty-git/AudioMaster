@@ -49,3 +49,52 @@ jinja2.exceptions.TemplateNotFound: prompts/view.html
 2024-11-26 15:16:21,928 INFO: Outline saved to database with id baec63dc-3c4e-424b-b004-12973428a8fe [in /home/runner/AudioMaster/routes/outlines.py:83]
 2024-11-27 07:30:54,502 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:47]
 2024-11-27 07:31:41,037 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:47]
+2024-11-27 07:34:33,171 INFO: OpenAI API key verification successful [in /home/runner/AudioMaster/services/ai_service.py:28]
+2024-11-27 07:34:33,171 INFO: Starting outline generation for response 57b1c46c-f153-4fac-8f00-9758b1b3d3a1 [in /home/runner/AudioMaster/routes/outlines.py:73]
+2024-11-27 07:34:33,172 INFO: Generating outline with OpenAI [in /home/runner/AudioMaster/services/ai_service.py:45]
+2024-11-27 07:34:46,406 INFO: Successfully generated outline [in /home/runner/AudioMaster/services/ai_service.py:59]
+2024-11-27 07:34:47,391 INFO: Outline saved to database with id 4fa87446-ce6c-45fd-9cfb-439685a4bb1e [in /home/runner/AudioMaster/routes/outlines.py:83]
+2024-11-27 07:35:08,942 ERROR: Exception on /prompts/3d0d57b3-fd21-480a-84a5-23efaeedd618/edit [GET] [in /home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py:875]
+Traceback (most recent call last):
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/routes/prompts.py", line 110, in edit_prompt
+    return render_template('prompts/edit.html', prompt=prompt)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/templating.py", line 149, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/jinja2/environment.py", line 1084, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/jinja2/environment.py", line 1013, in get_template
+    return self._load_template(name, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/jinja2/environment.py", line 972, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/jinja2/loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/AudioMaster/.pythonlibs/lib/python3.11/site-packages/flask/templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: prompts/edit.html
+2024-11-27 09:48:35,280 INFO: AudioV4 startup [in /home/runner/AudioMaster/app.py:47]
+2024-11-27 09:54:55,364 INFO: OpenAI API key verification successful [in /home/runner/AudioMaster/services/ai_service.py:28]
+2024-11-27 09:54:55,366 INFO: Starting outline generation for response e95bdcde-a743-4722-9370-c6ec11c48bb5 [in /home/runner/AudioMaster/routes/outlines.py:73]
+2024-11-27 09:54:55,367 INFO: Generating outline with OpenAI [in /home/runner/AudioMaster/services/ai_service.py:45]
+2024-11-27 09:55:26,915 INFO: Successfully generated outline [in /home/runner/AudioMaster/services/ai_service.py:59]
+2024-11-27 09:55:27,869 INFO: Outline saved to database with id d1189948-a6dc-4712-b25f-8a9ebc919fb6 [in /home/runner/AudioMaster/routes/outlines.py:83]
